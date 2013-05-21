@@ -16,6 +16,7 @@
 	<plugin name="NetworkStatus" value="CDVConnection" />
 	</plugins>
 	
+        <access origin="https://service.odfjell.nl" />
 	
 	<!-- Icons -->
 	<icon src="gap/icon/Logo_57x57.png" gap:platform="ios" width="57" height="57" />

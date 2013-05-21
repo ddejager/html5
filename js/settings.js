@@ -112,8 +112,7 @@ function Decr(strIn)
 }
 
 function generic_ajax_sync(wsurl,data,funct) {
-    wsbusy = true;
-
+    
 	var wscall= wsbase + wsurl;
 	$.ajax( {	
 		url:wscall,
@@ -136,7 +135,6 @@ function generic_ajax_sync(wsurl,data,funct) {
 }
 function generic_ajax(wsurl,data,funct) {
                 
-    wsbusy = true;
 	var wscall= wsbase + wsurl;
 	$.ajax( {	
 		url:wscall,

@@ -43,6 +43,7 @@ function Validated(xml) {
 		$('#call_list').hide();
 		Redirect(0);
 	}
+        wsbusy = false;
 }
 function shakeEventDidOccur () {
 		getData();
@@ -50,10 +51,13 @@ function shakeEventDidOccur () {
 }
 
 function getData() {
-	$('#topbar').children().addClass('bgred');
-	$('#refreshbutton').attr('src','images/ajax-loader.gif');
-	stime= new Date().getTime();
-	generic_ajax('standby.asmx/GetCallsForWeek',{Year:current_year,week:current_week},gotCalls);
+	if (!wsbusy) {
+		$('#topbar').children().addClass('bgred');
+		$('#refreshbutton').attr('src','images/ajax-loader.gif');
+		stime= new Date().getTime();
+		generic_ajax('standby.asmx/GetCallsForWeek',{Year:current_year,week:current_week},gotCalls);
+	}
+
 }
 function gotCurrentStandby(xml) {
 	var found_objects = $(xml).find("Duty");
@@ -72,6 +76,7 @@ function gotCurrentStandby(xml) {
 			b = r + ' vervangt ' +b;
 		$('#header2').html( b + spac + ' (' + current_year + ' week '  + current_week + ')' );
 	});
+        wsbusy = false;
 	getData();
 }
 function gotCalls(xml) {
@@ -138,6 +143,7 @@ function gotCalls(xml) {
 	$('#topbar').children().removeClass('bgred');
 	$('#refreshbutton').attr('src','images/Refresh.png');
 	$('#call_list').listview('refresh');
+        wsbusy = false;
 }
 $(document).ajaxError(function(event, request, settings) {
   alert( "<li>Error requesting page " + settings.url + "</li>" );

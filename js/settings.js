@@ -2,6 +2,7 @@ var wsbase;
 var netstaticon = '';
 var netstatdesc = '';
 var enckey = '';
+var wsbusy = false;
 
 function checkConnection() {
 		try {
@@ -109,7 +110,10 @@ function Decr(strIn)
 		return '';
 	}
 }
+
 function generic_ajax_sync(wsurl,data,funct) {
+    wsbusy = true;
+
 	var wscall= wsbase + wsurl;
 	$.ajax( {	
 		url:wscall,
@@ -131,6 +135,8 @@ function generic_ajax_sync(wsurl,data,funct) {
 	});
 }
 function generic_ajax(wsurl,data,funct) {
+                
+    wsbusy = true;
 	var wscall= wsbase + wsurl;
 	$.ajax( {	
 		url:wscall,

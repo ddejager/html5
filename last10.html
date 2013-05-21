@@ -27,7 +27,7 @@ $(document).ready(function()
 	sh = $(this).height();
 	sw = $(this).width();
 	Validate(Validated);
-	
+
 	
 });
 function Validated(xml) {
@@ -48,6 +48,9 @@ function Validated(xml) {
 		$('#call_list').hide();
 		Redirect(0);
 	}
+        wsbusy = false;
+
+
 	
 }
 function shakeEventDidOccur () {
@@ -56,10 +59,13 @@ function shakeEventDidOccur () {
 }
 
 function getData() {
-	$('#topbar').children().addClass('bgred');
-	$('#refreshbutton').attr('src','images/ajax-loader.gif');
-	stime= new Date().getTime();
-	generic_ajax('standby.asmx/Get10Calls',{CallStatus:-1},gotCalls);
+        if (!wsbusy) {
+             $('#topbar').children().addClass('bgred');
+             $('#refreshbutton').attr('src','images/ajax-loader.gif');
+             stime= new Date().getTime();
+             generic_ajax('standby.asmx/Get10Calls',{CallStatus:-1},gotCalls);
+        }
+
 }
 function getCurrentStandby() {
 	generic_ajax('standby.asmx/GetCurrentStandbyNow',null,gotCurrentStandby);
@@ -77,7 +83,7 @@ function gotCurrentStandby(xml) {
 			b = r + ' vervangt ' +b;
 		$('#header2').html('NU: ' + b + ' (' + y + ' week '  + w + ')' );
 	});
-		
+	wsbusy = false;	
 	
 }
 function gotCalls(xml) {
@@ -141,7 +147,7 @@ function gotCalls(xml) {
 	$('#call_list').listview('refresh');
 
 	
-
+        wsbusy = false;
 }
 $(document).ajaxError(function(event, request, settings) {
   alert( "<li>Error requesting page " + settings.url + "</li>" );
@@ -179,7 +185,9 @@ function RemoveCall() {
 	generic_ajax('standby.asmx/DeleteCall',{CallID:cid},gotResult);
 }
 function gotResult(xml) {
+        wsbusy = false;
 	getData();
+
 }
 function SaveRemarks() {
 
@@ -196,7 +204,9 @@ function savedRemarks(xml) {
 	$(selected_object).children().removeClass('bgorange');
 	
 	$('#Call_Remarks').val('');
+        wsbusy = false;
 	getData();
+      
 }
 function goBack() {
 	location='index.html';

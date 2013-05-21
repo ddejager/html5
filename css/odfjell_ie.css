@@ -1,0 +1,102 @@
+A:hover
+{
+    COLOR: #003366;
+    TEXT-DECORATION: underline
+}
+A
+{
+    COLOR: #003366;
+    TEXT-DECORATION: none
+}
+A.1:hover
+{
+    COLOR: #ffffff;
+    TEXT-DECORATION: underline
+}
+A.1
+{
+    COLOR: #ffffff;
+    TEXT-DECORATION: none
+}
+BODY
+{
+ 	font-family: arial;
+	font-size:15px;
+}
+.bgred {
+	background-color:red;
+}
+.bgorange {
+	background-color:orange;
+}
+.dmain {
+	margin:2px;
+	background-color:#eeeeee;
+	border: 4px solid;
+	border-radius:25px;
+	border-color:navy;
+	background-image:url('images/odfjell_back.jpg');
+	background-repeat:no-repeat;
+	background-position:0px 0px;
+	background-size:100%;
+	width:95%;
+	height:1000px;
+}
+.taphold {
+	background-color:#BB6F04;
+	
+}
+/* Wrapping */
+.wrapping-truncate {
+	white-space: nowrap;
+}
+
+.wrapping-new-line {
+	white-space: normal;
+}
+
+/* List icon positioning */
+.ui-li-has-icon .ui-btn-inner a.ui-link-inherit, .ui-li-static.ui-li-has-icon {
+	min-height: 40px;
+	padding-left: 60px;
+}
+
+.ui-listview .ui-li-icon {
+	max-height: 36px;
+	max-width: 36px;
+}
+
+/* List links */
+.ui-li a {
+	color: #1BA8E0;
+	text-decoration: none;
+}
+.colsheader
+{
+    FONT-WEIGHT: bold;
+    FONT-SIZE: 8pt;
+    BACKGROUND: #003366;
+    PADDING-BOTTOM: 1px;
+    MARGIN-LEFT: 4px;
+    COLOR: #ffffff;
+    MARGIN-RIGHT: 4px
+}
+.colheader
+{
+    FONT-WEIGHT: bold;
+    FONT-SIZE: 8pt;
+    BACKGROUND: #cccccc;
+    PADDING-BOTTOM: 1px;
+    MARGIN-LEFT: 4px;
+    COLOR: #000000;
+    MARGIN-RIGHT: 4px
+}
+.cell_s
+{
+    FONT-WEIGHT: normal;
+    FONT-SIZE: 8pt;
+    BACKGROUND: #eeeeee;
+    MARGIN-LEFT: 4px;
+    COLOR: #000000;
+    MARGIN-RIGHT: 4px
+}

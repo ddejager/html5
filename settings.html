@@ -1,0 +1,296 @@
+<!DOCTYPE HTML>
+<HEAD>
+<title>Mobile Standby</title>
+<meta charset="UTF-8" />
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<link rel="stylesheet"  href="jquery.mobile.min.css"/>
+<link rel="stylesheet" type="text/css" href="odfjell_ie.css" />
+<script type="text/javascript" src="js/sjcl.js"></script>
+<script src="js/settings.js" type="text/javascript"></script>
+<script src="js/jquery-1.9.1.min.js" type="text/javascript"></script>
+<script src="js/jquery.mobile-1.3.1.min.js" type="text/javascript"></script>
+<script src="js/datef.js" type="text/javascript"></script>
+<script type="text/javascript" defer="defer">
+var stime;
+var selected_object;
+var current_year,current_week;
+var debug = false;
+$(document).ready(function() 
+{
+	Load();
+	
+	if ( $('#alg_username').val()!='') 
+	{
+		generic_ajax_sync('standby.asmx/GetGroupByMember',{logon:$('#alg_username').val(),memid:''},gotGroups); 
+		
+	}
+	
+});
+function testAccount() {
+	$('#topbar').children().addClass('bgred');
+	$('#refreshbutton').attr('src','images/ajax-loader.gif');
+
+	generic_ajax_sync(
+					'standby.asmx/ValidateUser',
+					{strAuth:'test',strUser:Decr(localStorage.alg_username),strPassword:Decr(localStorage.alg_password)}, 	    					
+					testedAccount); 
+}
+function testedAccount(xml) {
+	$('#topbar').children().removeClass('bgred');
+	$('#refreshbutton').attr('src','images/Refresh.png');
+	
+	if ($(xml).find("string").text()=='True') 
+		alert('Usernaam/wachtwoord zijn goed!');
+	else
+		alert('Usernaam/wachtwoord zijn niet goed!');
+		
+}
+function testWS() {
+	$('#topbar').children().addClass('bgred');
+	$('#refreshbutton').attr('src','images/ajax-loader.gif');
+	generic_ajax_sync(
+					'standby.asmx/ValidateUser',
+					{strAuth:'test',strUser:Decr(localStorage.alg_username),strPassword:Decr(localStorage.alg_password)}, 	    					
+					testedWS); 
+}
+function testedWS(xml) {
+	$('#topbar').children().removeClass('bgred');
+	$('#refreshbutton').attr('src','images/Refresh.png');
+	alert('Test geslaagd!');
+}
+
+function Load() {
+	$('#ws_url').val(Decr(localStorage.ws_url));
+	$('#ws_username').val(Decr(localStorage.ws_username));
+	$('#ws_password').val(Decr(localStorage.ws_password));
+	$('#alg_username').val(Decr(localStorage.alg_username));
+	$('#alg_password').val(Decr(localStorage.alg_password));
+}
+function SaveWS() {
+	localStorage.ws_url= Enc($('#ws_url').val());
+	wsbase = $('#ws_url').val();
+	localStorage.ws_username = Enc($('#ws_username').val());
+	localStorage.ws_password = Enc($('#ws_password').val());
+	generic_ajax('standby.asmx/TestConnection',null,testedConnection);
+}
+function testedConnection(xml) {
+	alert('Webservice instellingen zijn getest en opgeslagen!');
+	
+
+}
+
+function SaveAccount() {
+	if ( Decr(localStorage.ws_username)=='' || Decr(localStorage.ws_password)=='') 
+	{
+		alert('U dient eerst de webservice instellingen in te vullen, voordat u uw account in kan vullen!');
+		return;
+	}
+	if ( $('#alg_username').val()!='') 
+	{
+		$('#topbar').children().addClass('bgred');
+		$('#refreshbutton').attr('src','images/ajax-loader.gif');
+		generic_ajax_sync(
+						'standby.asmx/ValidateUser',
+						{strAuth:'test',strUser:$('#alg_username').val(),strPassword:$('#alg_password').val()}, 	    					
+						gotAD); 
+	}
+	else
+		alert('Account kan niet worden opgeslagen omdat deze niet is ingevuld!');
+}
+function gotAD(xml) {
+	$('#topbar').children().removeClass('bgred');
+	$('#refreshbutton').attr('src','images/Refresh.png');
+	if ($(xml).find("string").text()=='True') {
+		generic_ajax_sync('standby.asmx/GetGroupByMember',{logon:$('#alg_username').val(),memid:''},gotGroupsSave); 
+	}
+	else {
+		alert('Foutief wachtwoord, controleer het, en probeer opnieuw om op te slaan!' );
+	}
+	
+}
+function gotGroupsSave(xml) {
+	var found_objects = $(xml).find("GroupMembers");
+	var groups = '';
+	var storedgroup = Decr(localStorage.group);
+	
+	$('#select-groups').empty();
+	found_objects.each(function() 
+	{
+		groupid = $(this).find('GroupID').text();
+		groupname = $(this).find('Name').text();
+		var sel = '';
+		if (storedgroup=='' || storedgroup==groupid) {
+			storedgroup=groupid;
+			localStorage.group=Enc(groupid);
+			localStorage.groupname=Enc(groupname);
+			sel = ' selected ';
+		}
+		var opt = '<option '  + sel + ' value='+groupid+'>' + groupname + '</option>';
+		$('#select-groups').append(opt);
+	});
+	$('#select-groups').selectmenu("refresh");
+	if (storedgroup!='') {
+		localStorage.alg_username = Enc($('#alg_username').val());
+		localStorage.alg_password = Enc($('#alg_password').val());
+		localStorage.group=Enc($('#select-groups option:selected').val());
+		localStorage.groupname=Enc($('#select-groups option:selected').text());
+		alert('Account is opgeslagen!');
+	}
+	else {
+		alert('Uw gebruikernaam en wachtwoord zijn goed, maar u bent niet bekend in het standby systeem!');
+	}
+}
+function gotGroups(xml) {
+	var found_objects = $(xml).find("GroupMembers");
+	var groups = '';
+	var storedgroup = Decr(localStorage.group);
+	$('#select-groups').empty();
+	found_objects.each(function() 
+	{
+		groupid = $(this).find('GroupID').text();
+		groupname = $(this).find('Name').text();
+		var sel = '';
+		if (storedgroup=='' || storedgroup==groupid) {
+			storedgroup=groupid;
+			localStorage.group=Enc(groupid);
+			localStorage.groupname=Enc(groupname);
+			sel = ' selected ';
+		}
+		var opt = '<option '  + sel + ' value='+groupid+'>' + groupname + '</option>';
+		$('#select-groups').append(opt);
+	});
+	$('#select-groups').selectmenu("refresh");
+	
+}
+function Reset() {
+	localStorage.clear();  			// empty store 
+	initKey();
+	initURL();
+	localStorage.ws_username = Enc('');
+	localStorage.ws_password = Enc('');
+	localStorage.alg_username = Enc('');
+	localStorage.alg_password = Enc('');
+	Load();
+	alert('Instellingen naar default gezet!');
+}	
+function goBack() {
+	location='index.html';
+}
+var BrowserDetect = 
+{
+    init: function () 
+    {
+        this.browser = this.searchString(this.dataBrowser) || "Other";
+        this.version = this.searchVersion(navigator.userAgent) ||       this.searchVersion(navigator.appVersion) || "Unknown";
+    },
+
+    searchString: function (data) 
+    {
+        for (var i=0 ; i < data.length ; i++)   
+        {
+            var dataString = data[i].string;
+            this.versionSearchString = data[i].subString;
+
+            if (dataString.indexOf(data[i].subString) != -1)
+            {
+                return data[i].identity;
+            }
+        }
+    },
+
+    searchVersion: function (dataString) 
+    {
+        var index = dataString.indexOf(this.versionSearchString);
+        if (index == -1) return;
+        return parseFloat(dataString.substring(index+this.versionSearchString.length+1));
+    },
+
+    dataBrowser: 
+    [
+        { string: navigator.userAgent, subString: "Chrome",  identity: "Chrome" },
+        { string: navigator.userAgent, subString: "MSIE",    identity: "Explorer" },
+        { string: navigator.userAgent, subString: "Firefox", identity: "Firefox" },
+        { string: navigator.userAgent, subString: "Safari",  identity: "Safari" },
+        { string: navigator.userAgent, subString: "Opera",   identity: "Opera" },
+    ]
+
+};
+BrowserDetect.init();
+
+</script>
+<body>
+	<div  data-role="header" data-position="fixed" data-tap-toggle="false">
+		<div>
+			<h1 id="topbar" class='ui-title' data-divider-="a" role='heading' aria-level='1'>
+			<div id="header2">Instellingen</div>
+			<a href="#" onclick="goBack();"  class="ui-btn-left"  data-role="button" data-icon="home" data-iconpos="notext" data-theme="a" data-inline="true" ></a>
+			<a href="#" onclick="getAll();"><img height=32px id="refreshbutton" src="images/Refresh.png" class="ui-btn-right" ></a></h1>
+		</div>
+	</div>
+	
+	<div  data-role="content">
+	
+		<div data-role="collapsible-set" data-theme="b" data-content-theme="b" data-collapsed-icon="arrow-r" data-expanded-icon="arrow-d">
+			<div data-theme="b"  data-role="collapsible" data-inset="false">
+				<h2>Controleer verbinding</h2>
+				<ul data-role="listview">
+					<li data-theme="c" data-role="list-divider">Webservice</li>
+					<li><button data-role="button" data-theme="a" onclick="testWS();" value="Test verbinding" id="Button_Test_WS"></button></li>
+					<li data-theme="c" data-role="list-divider">Account</li>
+					<li><button data-role="button" data-theme="a" onclick="testAccount();" value="Test je eigen acccount" id="Button_Test_Account"></button></li>
+					
+				</ul>
+			</div><!-- /collapsible -->	
+		
+			<div data-theme="b"  data-role="collapsible" data-inset="false">
+				<h2>Webservice instellingen</h2>
+				<ul data-role="listview">
+					<li data-theme="c" data-role="list-divider">Base URL:</li>
+					<li><input type=text id="ws_url" /></li>
+					<li data-theme="c" data-role="list-divider">Username (voor webservice):</li>
+					<li><input type=text id="ws_username" /></li>
+					<li data-theme="c" data-role="list-divider">Password (voor webservice):</li>
+					<li><input type=password id="ws_password" /></li>
+					<li data-theme="c" ><button data-theme="a"  onclick=SaveWS() value="Opslaan" id="Button_Save_1"></button></li>
+				</ul>
+			</div><!-- /collapsible -->	
+			<div data-theme="b"  data-role="collapsible" data-inset="false">
+				<h2>Eigen account</h2>
+				<ul data-role="listview">
+					<li data-theme="c" data-role="list-divider">Username:</li>
+					<li><input type=text id="alg_username" /></li>
+					<li data-theme="c" data-role="list-divider">Password:</li>
+					<li><input type=password id="alg_password" /></li>
+					<li data-theme="c" data-role="list-divider">Groep:</li>
+					<li  ><select  data-theme="c" name="select-groups" id="select-groups">
+					</select></li>
+
+					<li data-theme="c" ><button data-theme="a"  onclick=SaveAccount() value="Opslaan" id="Button_Save_2"></button></li>
+					
+					
+				</ul>
+			</div>
+
+			<div data-theme="b"  data-role="collapsible" data-inset="false">
+				<h2>Reset naar default</h2>
+				<button data-role="button" data-theme="a" onclick=Reset() value="Klik om te resetten" id="Button_Save"></button>
+				
+			</div><!-- /collapsible -->	
+		
+		</div>
+		
+		
+		
+
+	</div>
+	
+	<div id="footer" data-role="content" data-scrollz="pull">
+
+	</div>
+
+
+</body>
+</html>

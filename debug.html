@@ -1,0 +1,278 @@
+<!DOCTYPE HTML>
+<HEAD>
+<title>Mobile Standby</title>
+<meta charset="UTF-8" />
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<link rel="stylesheet"  href="jquery.mobile.min.css"/>
+<link rel="stylesheet" type="text/css" href="odfjell_ie.css" />
+<script type="text/javascript" src="js/sjcl.js"></script>
+<script src="js/settings.js" type="text/javascript"></script>
+<script src="js/jquery-1.9.1.min.js" type="text/javascript"></script>
+<script src="js/jquery.mobile-1.3.1.min.js" type="text/javascript"></script>
+<script src="js/datef.js" type="text/javascript"></script>
+<script src="js/modernizr.js" type="text/javascript"></script>
+<script type="text/javascript" src="js/shake.js"></script>
+
+<script src="phonegap.js"></script>
+<script type="text/javascript" defer="defer">
+var stime;
+var selected_object;
+var current_year,current_week;
+var hasPhoneGap = false;
+
+
+function onDeviceReady() {
+	$('#header2').append('(p)');
+	hasPhoneGap = true;
+}
+$(document).ready(function() 
+{
+	document.addEventListener("deviceready", onDeviceReady, false);
+	Validate(Validated);
+	
+});
+
+function shakeEventDidOccur () {
+		getAll();
+}
+
+function Validated(xml) {
+	var res = $(xml).find("string").text();
+	if (res=='True') {
+		getAll();
+		$('#footer').html(getStatusInfo());
+		window.addEventListener('shake', shakeEventDidOccur, false);
+	}
+	else {
+		$('#refreshbutton').remove();
+		$('#content').html('');
+		Redirect(0);
+	}
+}
+
+function getAll() {
+	$('#content').html('');
+	getLayout();
+	getLogonInfo();
+	if (hasPhoneGap) {
+		checkConnection();
+		getNetworkInfo();
+		getPhoneGap();
+	}
+	
+	getLocalStorage();
+	
+	getCurrentProvider();
+	getSMSCredits();
+	testConnection();
+}
+function getPhoneGap() {
+	var ht = '';
+	ht = ht + '<table>\n';
+	ht = ht + '<tr>\n';
+	ht = ht + '<td class="colsheader" colspan="2">Device Info</td>\n';
+	ht = ht + '</tr>\n';
+	ht = ht + '<tr><td class="colheader">Device name</td><td class="cell_s">' + device.name + '</td></tr>\n' ;
+	ht = ht + '<tr><td class="colheader">cordova</td><td class="cell_s">' + device.cordova  + '</td></tr>\n' ;
+	ht = ht + '<tr><td class="colheader">platform</td><td class="cell_s">' + device.platform  + '</td></tr>\n' ;
+	ht = ht + '<tr><td class="colheader">UUID</td><td class="cell_s">' + device.uuid  + '</td></tr>\n' ;
+	ht = ht + '<tr><td class="colheader">version</td><td class="cell_s">' + device.version  + '</td></tr>\n' ;
+	ht = ht + '<tr><td class="colsheader" colspan="2">End of Device info</td></tr>\n';
+	ht = ht + '</table>\n';
+	$('#content').append(ht);
+
+}
+
+function getNetworkInfo() {
+	var ht = '';
+	ht = ht + '<table>\n';
+	ht = ht + '<tr>\n';
+	ht = ht + '<td class="colsheader" colspan="2">Network Info</td>\n';
+	ht = ht + '</tr>\n';
+	ht = ht + '<tr><td class="colheader">Network status</td><td class="cell_s">' + netstatdesc + '</td></tr>\n' ;
+	ht = ht + '<tr><td class="colheader">Type network</td><td class="cell_s"><img src="' + netstaticon + '"></td></tr>\n' ;
+	ht = ht + '<tr><td class="colsheader" colspan="2">End of Client info</td></tr>\n';
+	ht = ht + '</table>\n';
+	$('#content').append(ht);
+
+}
+function getLocalStorage() 
+{	
+	var ht = '';
+	ht = ht + '<table>\n';
+	ht = ht + '<tr>\n';
+	ht = ht + '<td class="colsheader" colspan="2">LocalStorage contents</td>\n';
+	ht = ht + '</tr>\n';
+	
+	
+	
+	try {
+		for (var i = 0; i < localStorage.length; i++)
+		{
+			ht = ht + '<tr>\n';
+			ht = ht + '<td class="colheader">' + localStorage.key(i) + '</td><td class="cell_s">' + localStorage.getItem(localStorage.key(i)) + '</td>\n' ;
+			ht = ht + '</tr>\n';
+		}
+	}
+	catch (err) {
+		alert(err);
+	}
+	ht = ht + '<tr><td class="colsheader" colspan="2">End of Localstorage';
+	ht = ht + '&nbsp;<input type="button" data-role="button" data-theme="b" class="ui-btn-right" onclick="Clear()" value="Clear localStorage" id="Button_Clear" ></input>'; 
+	ht = ht + '</td></tr>\n';
+	ht = ht + '</table>\n';
+	$('#content').append(ht);
+}
+function getLogonInfo() {
+	var ht = '';
+	ht = ht + '<table>\n';
+	ht = ht + '<tr>\n';
+	ht = ht + '<td class="colsheader" colspan="2">Logon info</td>\n';
+	ht = ht + '</tr>\n';
+	ht = ht + '</tr>\n';
+	ht = ht + '<tr><td class="colheader">Logged in with user</td><td class="cell_s">' + Decr(localStorage.alg_username) +  '</td></tr>\n' ;
+	ht = ht + '<tr><td class="colheader">Service user used for accessing webservice</td><td class="cell_s">' + Decr(localStorage.ws_username) + '</td></tr>\n' ;
+	ht = ht + '</table>\n';
+	$('#content').append(ht);
+}
+function getLayout() 
+{
+	var ht = '';
+	ht = ht + '<table>\n';
+	ht = ht + '<tr>\n';
+	ht = ht + '<td class="colsheader" colspan="2">Client info</td>\n';
+	ht = ht + '</tr>\n';
+	ht = ht + '<tr><td class="colheader">Screen width/Height</td><td class="cell_s">' + $(this).width() + 'x' + $(this).height() + '</td></tr>\n' ;
+	ht = ht + '<tr><td class="colheader">Browser</td><td class="cell_s">' + BrowserDetect.browser + '</td></tr>\n' ;
+	ht = ht + '<tr><td class="colheader">User agent</td><td class="cell_s">' + navigator.userAgent + '</td></tr>\n' ;
+	ht = ht + '<tr><td class="colsheader" colspan="2">End of Client info</td></tr>\n';
+	ht = ht + '</table>\n';
+	$('#content').append(ht);
+}
+function getCurrentProvider() 
+{
+	$('#topbar').children().addClass('bgred');
+	$('#refreshbutton').attr('src','images/ajax-loader.gif');
+	stime= new Date().getTime();
+	generic_ajax('standby.asmx/GetCurrentProvider',null,gotCurrentProvider);
+}
+function gotCurrentProvider(xml) 
+{
+	var prov = $(xml).find("string").text();
+	$('#content').append('<hr>SMS Provider:'  + prov + '<br>' );
+	$('#topbar').children().removeClass('bgred');
+	$('#refreshbutton').attr('src','images/Refresh.png');
+	$('#user_list').listview('refresh');
+}
+
+function testConnection() {
+
+	$('#topbar').children().addClass('bgred');
+	$('#refreshbutton').attr('src','images/ajax-loader.gif');
+	
+	stime= new Date().getTime();
+	generic_ajax('standby.asmx/TestConnection',null,gotTestConnection);
+}
+function gotTestConnection(xml) {
+	var test = $(xml).find("boolean").text();
+	$('#content').append('Connectiontest:'  + test + '<br>');
+	$('#topbar').children().removeClass('bgred');
+	$('#refreshbutton').attr('src','images/Refresh.png');
+	$('#user_list').listview('refresh');
+}
+function getSMSCredits() {
+	$('#topbar').children().addClass('bgred');
+	$('#refreshbutton').attr('src','images/ajax-loader.gif');
+	stime= new Date().getTime();
+	generic_ajax('standby.asmx/GetCredits',{prov:'mollie'},gotSMSCredits);
+}
+function gotSMSCredits(xml) {
+	var creds = $(xml).find("string").text();
+	$('#content').append('SMS Credits:'  + creds + '<hr>');
+	$('#topbar').children().removeClass('bgred');
+	$('#refreshbutton').attr('src','images/Refresh.png');
+	$('#user_list').listview('refresh');
+}
+
+$(document).ajaxError(function(event, request, settings) {
+  alert( "<li>Error requesting page " + settings.url + "</li>" );
+});
+
+
+function goBack() {
+	location='index.html';
+}
+var BrowserDetect = 
+{
+    init: function () 
+    {
+        this.browser = this.searchString(this.dataBrowser) || "Other";
+        this.version = this.searchVersion(navigator.userAgent) ||       this.searchVersion(navigator.appVersion) || "Unknown";
+    },
+
+    searchString: function (data) 
+    {
+        for (var i=0 ; i < data.length ; i++)   
+        {
+            var dataString = data[i].string;
+            this.versionSearchString = data[i].subString;
+
+            if (dataString.indexOf(data[i].subString) != -1)
+            {
+                return data[i].identity;
+            }
+        }
+    },
+
+    searchVersion: function (dataString) 
+    {
+        var index = dataString.indexOf(this.versionSearchString);
+        if (index == -1) return;
+        return parseFloat(dataString.substring(index+this.versionSearchString.length+1));
+    },
+
+    dataBrowser: 
+    [
+        { string: navigator.userAgent, subString: "Chrome",  identity: "Chrome" },
+        { string: navigator.userAgent, subString: "MSIE",    identity: "Explorer" },
+        { string: navigator.userAgent, subString: "Firefox", identity: "Firefox" },
+        { string: navigator.userAgent, subString: "Safari",  identity: "Safari" },
+        { string: navigator.userAgent, subString: "Opera",   identity: "Opera" },
+    ]
+
+};
+BrowserDetect.init();
+
+function Clear() {
+	localStorage.clear();
+	alert('html5 storage cleared!');
+	
+	
+}
+</script>
+<body>
+	
+<div  data-role="header" data-position="fixed" data-tap-toggle="false">
+	<div>
+		<h1 id="topbar" class='ui-title' data-divider-="e" role='heading' aria-level='1'>
+		<div id="header2">DEBUG INFO</div>
+		<a href="#" onclick="goBack();"  class="ui-btn-left"  data-role="button" data-icon="back" data-iconpos="notext" data-theme="a" data-inline="true" ></a>
+		<a href="#" onclick="getAll();"><img height=32px id="refreshbutton" src="images/Refresh.png" class="ui-btn-right" ></a></h1>
+		
+
+	</div>
+</div>
+<div id="content" data-role="content" data-scrollz="pull">
+</div>
+
+<div  data-theme="a" data-role="content" data-position="fixed" data-tap-toggle="false">
+<div id="bottombar" calss="ui-title" data-theme="a" role="heading"></div>
+<div id="footer">--</div>
+</div>
+
+
+</body>
+</html>

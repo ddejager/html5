@@ -1,0 +1,285 @@
+<!DOCTYPE HTML>
+<HEAD>
+<title>Mobile Standby</title>
+<meta charset="UTF-8" />
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<link rel="stylesheet"  href="jquery.mobile.min.css"/>
+<link rel="stylesheet" type="text/css" href="odfjell_ie.css" />
+<script type="text/javascript" src="js/sjcl.js"></script>
+<script src="js/settings.js" type="text/javascript"></script>
+<script src="js/jquery-1.9.1.min.js" type="text/javascript"></script>
+<script src="js/jquery.mobile-1.3.1.min.js" type="text/javascript"></script>
+<script src="js/datef.js" type="text/javascript"></script>
+<script type="text/javascript" src="js/shake.js"></script>
+
+<script type="text/javascript" defer="defer">
+var stime;
+var selected_object;
+var sh,sw;
+
+
+$(document).ready(function() 
+{
+
+	sh = $(this).height();
+	sw = $(this).width();
+	Validate(Validated);
+	
+	
+});
+function Validated(xml) {
+	var res = $(xml).find("string").text();
+	if (res=='True') {
+		if (sw<400) 
+			$('#pagetitle').html('Laatste 10 Calls');
+		
+		
+		getData();
+		getCurrentStandby();
+		$('#footer').html(getStatusInfo());
+		window.addEventListener('shake', shakeEventDidOccur, false);
+	}	
+	else 
+	{
+		$('#refreshbutton').remove();
+		$('#call_list').hide();
+		Redirect(0);
+	}
+	
+}
+function shakeEventDidOccur () {
+		getData();
+		getCurrentStandby();
+}
+
+function getData() {
+	$('#topbar').children().addClass('bgred');
+	$('#refreshbutton').attr('src','images/ajax-loader.gif');
+	stime= new Date().getTime();
+	generic_ajax('standby.asmx/Get10Calls',{CallStatus:-1},gotCalls);
+}
+function getCurrentStandby() {
+	generic_ajax('standby.asmx/GetCurrentStandbyNow',null,gotCurrentStandby);
+}
+function gotCurrentStandby(xml) {
+	var found_objects = $(xml).find("Duty");
+	found_objects.each(function() 
+	{
+		var y = $(this).find('CurrentYear').text();
+		var w = $(this).find('CurrentWeek').text();
+		var b = $(this).find('BossName').text();
+		var r = $(this).find('ReplaceName').text();
+		
+		if (r!='') 
+			b = r + ' vervangt ' +b;
+		$('#header2').html('NU: ' + b + ' (' + y + ' week '  + w + ')' );
+	});
+		
+	
+}
+function gotCalls(xml) {
+	$('#call_list').children().remove('li');
+	var found_objects = $(xml).find("Calls");
+	var count = 0;
+	var max = 10;
+	var name;
+	var cyearweek = '';
+	found_objects.each(function() 
+	{
+		if (count<max) 		{
+			count++;
+			var id = $(this).find('id').text();
+			var reason = $(this).find('Call_Reason').text();
+			var remarks = $(this).find('Call_Remarks').text();
+			var callog = $(this).find('Call_Log').text();
+			var ctime =  $(this).find('Call_Time').text();
+			var ncaller = $(this).find('Name_Caller').text();
+			var pcaller = $(this).find('Name_Destination').text();
+			var dname = $(this).find('FirstName').text() ;
+			var yw = $(this).find('Year').text() + '-'  + $(this).find('Week').text();
+			var cstatus = $(this).find('Call_Status').text()
+			if (cstatus=='0') 
+				cstatus='new.png';
+			else if (cstatus=='1') 
+				cstatus='active.png';
+			else if (cstatus=='2') 
+				cstatus='closed.png';
+	        In = ctime
+			D = In.replace(/^(\d{4})-(\d{2})-(\d{2})T([0-9:]*)([.0-9]*)(.)(.*)$/,"$1/$2/$3 $4 GMT") // D = "2002/06/17 09:25:43 GMT"
+			D = Date.parse(D) + 1000*RegExp.$5 // add ms
+			k = +1 // +1 or 0 or -1
+			D -= k * Date.parse("1970/01/01 "+RegExp.$7+" GMT") * (RegExp.$6+"1") // TZ
+			D = new Date(D) // Mon, 2002-06-17 08:25:43 UTC
+			
+
+			if (cyearweek!=yw) {
+				$('#call_list').append('<li data-role="list-divider">' + $(this).find('Year').text() + ' week '  + $(this).find('Week').text() + '</li>');
+				cyearweek=yw;
+			}
+			if (remarks!='') {
+				reason = reason + '<br><i>'  + remarks + '</i>';
+			}
+			var ni = $('#call_list').append('<li data-phone="' + pcaller + '" data-callog="' + callog + '" onclick=Click(this,' + id + ');><a href="#">' + 
+									'<img src="images/'  + cstatus + '" alt="new" class="ui-li-count" />' +
+									id + ' ' + dateFormat(D,"dd/mm HH:MM") + 
+									' ' + dname + 
+									 ' door ' + 
+									ncaller + ' (' + pcaller + ')' +
+									'<font style="white-space:normal; font-size: small" ><br><b>' + reason + '</b></font></a></li>');
+			
+									
+			
+		}
+		doLayout();
+	});
+	etime = new Date().getTime();
+	$('#topbar').children().removeClass('bgred');
+	$('#refreshbutton').attr('src','images/Refresh.png');
+	$('#call_list').listview('refresh');
+
+	
+
+}
+$(document).ajaxError(function(event, request, settings) {
+  alert( "<li>Error requesting page " + settings.url + "</li>" );
+});
+
+function Click(obj,id) {
+
+	$(obj).children().addClass('bgorange');
+	selected_object = obj;
+	
+	$('#Call_ID').val(id);
+	$('#callid').html('Change call ' + id);
+	var phonenumber = $(selected_object).attr("data-phone") ;
+	if (phonenumber.length==4) 
+		phonenumber = '+3110295' + phonenumber;
+	
+	$('#telnr').html('Bel ' + phonenumber);
+	$('#telnr').attr("href", 'tel:' + phonenumber);
+	$('#popupdiv').popup("open");
+}
+function closeMenu() {
+	$(selected_object).children().removeClass('bgorange');
+
+}
+function changeStatus(sid) {
+	$('#popupdiv').popup("close");
+	$(selected_object).children().removeClass('bgorange');
+	var cid = $('#Call_ID').val();
+	generic_ajax('standby.asmx/EditCallStatus',{CallID:cid,CallStatus:sid},gotResult);
+}
+function RemoveCall() {
+	$('#popupdiv').popup("close");
+	$(selected_object).children().removeClass('bgorange');
+	var cid = $('#Call_ID').val();
+	generic_ajax('standby.asmx/DeleteCall',{CallID:cid},gotResult);
+}
+function gotResult(xml) {
+	getData();
+}
+function SaveRemarks() {
+
+	var cid = $('#Call_ID').val();
+	var rem = Decr(localStorage.alg_username) + ':'  + $('#Call_Remarks').val();
+	generic_ajax('standby.asmx/UpdateCallRemarks',{CallID:cid,CallRemarks:rem,AddInfo:true},savedRemarks);
+}
+function ResetRemarks() {
+	var cid = $('#Call_ID').val();
+	generic_ajax('standby.asmx/UpdateCallRemarks',{CallID:cid,CallRemarks:'',AddInfo:false},savedRemarks);
+}
+function savedRemarks(xml) {
+	$('#popupdiv').popup("close");
+	$(selected_object).children().removeClass('bgorange');
+	
+	$('#Call_Remarks').val('');
+	getData();
+}
+function goBack() {
+	location='index.html';
+}
+function doLayout() {
+	$('#spacer').height( $('#header2').height() );
+}
+function popLog() {
+	var cl = $(selected_object).attr("data-callog") ;
+	cl = cl.replace(/(\r\n|\n|\r)/gm,"<br>");	
+	$('#calllog').html(cl);
+}
+
+
+</script>
+<body>
+<div  data-role="header" data-position="fixed" data-tap-toggle="false">
+	<div>
+		<h1 id="topbar" class='ui-title' role='heading' aria-level='1'><div id="pagetitle">Laatste 10 standby Calls</div>
+		<a href="#" onclick="goBack();"  class="ui-btn-left"  data-role="button" data-icon="back" data-iconpos="notext" data-theme="a" data-inline="true" ></a>
+		<a href="#" onclick="getData();getCurrentStandby();"><img height=32px id="refreshbutton" src="images/Refresh.png" class="ui-btn-right" ></a>
+		</h1>
+	</div>
+</div>
+<!-- Content -->
+<div id="content" data-role="content" data-scrollz="pull">
+	<ul data-role="listview" data-divider-theme="e" >
+		<li id="header2" class='ui-title' data-role='list-divider' aria-level='1'></li>
+		</ul><br>&nbsp;<br>
+		<div id="spacer"></div>
+		<ul id="call_list" data-role="listview">
+		</ul>
+</div>
+
+<div id="popupdiv" data-role="popup">
+	<a onclick=closeMenu() href="#" data-rel="back" data-role="button" data-theme="a" data-icon="delete" data-iconpos="notext" class="ui-btn-right">Close</a>
+	<div data-role="collapsible-set" data-theme="b" data-content-theme="c" data-collapsed-icon="arrow-r" data-expanded-icon="arrow-d" style="margin:0; width:300px;">
+		<div data-role="collapsible" data-inset="false">
+			<h2>Wijzigen status </h2>
+			<ul data-role="listview">
+				<li><a class="ex_btn"  onclick=changeStatus(1) href="#">Naar Aktief</a></li>
+				<li><a class="ex_btn" onclick=changeStatus(2) href="#">naar Gesloten</a></li>
+				<li><a class="ex_btn" onclick=changeStatus(0) href="#">naar Nieuw</a></li>
+			</ul>
+		</div><!-- /collapsible -->	
+		<div data-role="collapsible" data-inset="false">
+			<h2>Toevoegen tekst </h2>
+			<ul data-role="listview">
+				<li data-role="list-divider">Toevoegen tekst</li>
+				<li><textarea rows=8 cols=50 id="Call_Remarks"></textarea></li>
+				<li><button class="ex_btn"  onclick=SaveRemarks() value="Opslaan" id="Button_Save"></button></li>
+			</ul>
+		</div><!-- /collapsible -->	
+		<div data-role="collapsible" data-inset="false">
+			<h2>Bellen</h2>
+			<ul data-role="listview">
+				<li><a id="telnr" href="tel:000">Klik hier</a></li>
+			</ul>
+		</div><!-- /collapsible -->	
+		<div data-role="collapsible" data-inset="false">
+			<h2>Overigen</h2>
+			<ul data-role="listview">
+				<li data-role="list-divider">Overige functies</li>
+				<li><a onclick="popLog();" class="ex_btn"  href="#popuplog" data-rel="popup" data-transition="slide" data-position-to="window" data-role="button">Bekijken log</a></li>
+				<li><button  class="ex_btn" onclick=ResetRemarks() value="Verwijderen opmerkingen" id="Button_Reset_Remarks"></button></li>
+				<li><button  class="ex_btn" onclick=RemoveCall() value="Verwijderen Call" id="Button_Remove_Call"></button></li>
+			</ul>
+		</div><!-- /collapsible -->	
+			
+	</div>
+</div> <!-- / Popup -->
+<div id="popuplog" data-role="popup">
+	<a onclick=closeMenu() href="#" data-rel="back" data-role="button" data-theme="a" data-icon="delete" data-iconpos="notext" class="ui-btn-right">Close</a>
+	<ul data-role="listview">
+		<li data-role="list-divider">Log van deze melding:</li>
+		<div id="calllog">&nbsp;</div>
+	</ul>
+</div>
+<div  data-theme="a" data-role="content" data-position="fixed" data-tap-toggle="false">
+<div id="bottombar" calss="ui-title" data-theme="a" role="heading"></div>
+<div id="footer">--</div>
+</div>
+
+<input type=hidden value="12" size=3 id="Call_ID"> 
+</body>
+</html>

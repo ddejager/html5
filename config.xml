@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<widget xmlns = "http://www.w3.org/ns/widgets"
+        xmlns:gap = "http://phonegap.com/ns/1.0"
+        id        = "com.odfjell.otrstandby"
+        versionCode="10" 
+        version   = "1.0.1">
+
+    <name>OTR Standby</name>
+    <description>
+        App for handling incidents while we are on callout duty.
+	</description>
+    <author href="https://build.phonegap.com" email="dennis.de.jager@odfjell.com">
+        Dennis de Jager
+    </author>
+	<plugins>
+	<plugin name="NetworkStatus" value="CDVConnection" />
+	</plugins>
+	
+	
+	<!-- Icons -->
+	<icon src="gap/icon/Logo_57x57.png" gap:platform="ios" width="57" height="57" />
+	<icon src="gap/icon/Logo_72x72.png" gap:platform="ios" width="72" height="72" />
+	<icon src="gap/icon/Logo_114x114.png" gap:platform="ios" width="114" height="114" />
+	<icon src="gap/icon/Logo_144x144.png" gap:platform="ios" width="144" height="144" />
+
+	<!-- Splash screens -->
+	
+	<preference name="splash-screen-duration" value="7500" />
+
+	<!-- Default iphone screen, and 2x (double resolution) -->
+	<gap:splash src="gap/splash/splash_default_320x480.png" width="320" height="480" />
+	<gap:splash src="gap/splash/splash_default_at_2x_640x960.png" width="640" height="960" />
+	
+	<!-- Iphone 5 -->
+	<gap:splash src="gap/splash/splash_iphone5_640x1136.png" width="640" height="1136" />
+	
+	<!-- ipad -->
+	<gap:splash src="gap/splash/splash_ipad_landscape_1024x768.png" width="1024" height="768" />
+	<gap:splash src="gap/splash/splash_ipad_portrait_768x1024.png" width="768" height="1024" />
+	
+	<!-- ipad retina -->
+	<gap:splash src="gap/splash/splash_ipad_retina_landscape_2048x1496.png" width="2048" height="1496" />
+	<gap:splash src="gap/splash/splash_ipad_retina_portrait_1536x2008.png" width="1536" height="2008" />
+	
+</widget>

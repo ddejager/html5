@@ -123,6 +123,9 @@ function generic_ajax_sync(wsurl,data,funct) {
 		username:Decr(localStorage.ws_username),
 		password:Decr(localStorage.ws_password),
 		success:funct,
+                beforeSend: function (xhr){ 
+                    xhr.setRequestHeader('Authorization', make_base_auth(Decr(localStorage.ws_username), Decr(localStorage.ws_password))); 
+                },
 		error: function (request, status, error,exception) {
 			alert('De webservice kon niet worden aangeroepen.\nControleer je verbinding, en/of de gebruikernaam en wachtwoord, en probeer opnieuw\n' +
 				  'url:' + wscall + '\n'+ 
@@ -144,6 +147,9 @@ function generic_ajax(wsurl,data,funct) {
 		data:data,
 		username:Decr(localStorage.ws_username),
 		password:Decr(localStorage.ws_password),
+                beforeSend: function (xhr){ 
+                    xhr.setRequestHeader('Authorization', make_base_auth(Decr(localStorage.ws_username), Decr(localStorage.ws_password))); 
+                },
 		success:funct,
 		error: function (request, status, error) {
 			alert('De webservice kon niet worden aangeroepen.\nControleer je verbinding, en/of de gebruikernaam en wachtwoord, en probeer opnieuw\n' +

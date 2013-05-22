@@ -5,25 +5,31 @@ var enckey = '';
 var platform ='';
 var devicename = '???';
 var devicemodel = '';
-var online = true;
+var isonline = true;
 var hasPhoneGap = false;
 
 document.addEventListener("deviceready", onDeviceReady, false);
 function onDeviceReady() {
-	try {hasPhoneGap = true;} catch (err) {}
-	try {platform = device.platform;} catch (err) {}
-	try {devicename = device.name; } catch (err) {}
-	try {devicemodel = device.model;} catch (err) {}
-	try {document.addEventListener("online", wentOnline, false);} catch (err) {}
-	try {document.addEventListener("offline", wentOffline, false);} catch (err) {}
+	try {
+		hasPhoneGap = true;
+		platform = device.platform;
+		devicename = device.name; 
+		devicemodel = device.model;
+		document.addEventListener("online", wentOnline, false);
+		document.addEventListener("offline", wentOffline, false);
+		checkConnection();
+	}
+	catch (err) {
+		alert('error on ondeviceready:' + err);
+	}
 }
 function wentOffline() {
-	online = false;
+	isonline = false;
 	checkConnection();
 
 }
 function wentOnline() {
-	online = true;
+	isonline = true;
 	checkConnection();
 }
 function checkConnection() {

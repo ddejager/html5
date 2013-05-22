@@ -21,17 +21,11 @@
 var stime;
 var selected_object;
 var current_year,current_week;
-var hasPhoneGap = false;
-
-
-function onDeviceReady() {
-	$('#header2').append('(p)');
-	hasPhoneGap = true;
-}
 $(document).ready(function() 
 {
-	document.addEventListener("deviceready", onDeviceReady, false);
 	Validate(Validated);
+	if (hasPhoneGap) 
+		$('#header2').append('(p)');
 	
 });
 
@@ -76,10 +70,11 @@ function getPhoneGap() {
 	ht = ht + '<td class="colsheader" colspan="2">Device Info</td>\n';
 	ht = ht + '</tr>\n';
 	ht = ht + '<tr><td class="colheader">Device name</td><td class="cell_s">' + device.name + '</td></tr>\n' ;
+	ht = ht + '<tr><td class="colheader">Model</td><td class="cell_s">' + device.model  + '</td></tr>\n' ;
+	ht = ht + '<tr><td class="colheader">version</td><td class="cell_s">' + device.version  + '</td></tr>\n' ;
 	ht = ht + '<tr><td class="colheader">cordova</td><td class="cell_s">' + device.cordova  + '</td></tr>\n' ;
 	ht = ht + '<tr><td class="colheader">platform</td><td class="cell_s">' + device.platform  + '</td></tr>\n' ;
 	ht = ht + '<tr><td class="colheader">UUID</td><td class="cell_s">' + device.uuid  + '</td></tr>\n' ;
-	ht = ht + '<tr><td class="colheader">version</td><td class="cell_s">' + device.version  + '</td></tr>\n' ;
 	ht = ht + '<tr><td class="colsheader" colspan="2">End of Device info</td></tr>\n';
 	ht = ht + '</table>\n';
 	$('#content').append(ht);

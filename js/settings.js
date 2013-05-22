@@ -2,6 +2,21 @@ var wsbase;
 var netstaticon = '';
 var netstatdesc = '';
 var enckey = '';
+var platform ='';
+var devicename = '???';
+var devicemodel = '';
+
+var hasPhoneGap = false;
+
+document.addEventListener("deviceready", onDeviceReady, false);
+
+function onDeviceReady() {
+	hasPhoneGap = true;
+	platform = device.platform;
+	devicename = device.name; // iPhone / iPad
+	devicemodel = device.model;
+	
+}
 function checkConnection() {
 		try {
 			var networkState = navigator.connection.type;
@@ -14,6 +29,14 @@ function checkConnection() {
 			states[Connection.CELL_4G]  = 'Cell 4G connection';
 			states[Connection.CELL]     = 'Cell generic connection';
 			states[Connection.NONE]     = 'No network connection';
+			
+			// ios only returns _2G or CELL in the future
+			if (platform=='iOs') {
+				states[Connection.CELL_2G]  = 'Cell connection';
+				states[Connection.CELL_3G]  = 'Cell connection';
+				states[Connection.CELL_4G]  = 'Cell connection';
+				states[Connection.CELL]     = 'Cell connection';
+			}	
 			netstatdesc = states[networkState];
 			states[Connection.UNKNOWN]  = 'gap/net/NONE.PNG';
 			states[Connection.ETHERNET] = 'gap/net/WIFI.PNG';
@@ -23,6 +46,14 @@ function checkConnection() {
 			states[Connection.CELL_4G]  = 'gap/net/3G.png';
 			states[Connection.CELL]     = 'gap/net/2G.png';
 			states[Connection.NONE]     = 'gap/net/0BARS.png';
+			
+			// ios only returns _2G or CELL in the future
+			if (platform=='iOs') { 
+				states[Connection.CELL_2G]  = 'gap/net/3G.png';
+				states[Connection.CELL_3G]  = 'gap/net/3G.png';
+				states[Connection.CELL_4G]  = 'gap/net/3G.png';
+				states[Connection.CELL]     = 'gap/net/3G.png';
+			}
 			netstaticon = states[networkState];
 			$('#netstatus').attr('src',states[networkState]);
 		}
@@ -154,5 +185,5 @@ function generic_ajax(wsurl,data,funct) {
 	});
 }
 function getStatusInfo() {
-	return 'Ingelogd: ' + Decr(localStorage.alg_username) + ' || Webservice gebruikt:' +  Decr(localStorage.ws_username) + ' || Groep:' + Decr(localStorage.groupname);
+	return 'Ingelogd: ' + Decr(localStorage.alg_username) + ' || Webservice gebruikt:' +  Decr(localStorage.ws_username) + ' || Groep:' + Decr(localStorage.groupname) + ' || Device:' + devicename + ' ' + devicemodel;
 }

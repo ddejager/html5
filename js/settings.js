@@ -2,8 +2,6 @@ var wsbase;
 var netstaticon = '';
 var netstatdesc = '';
 var enckey = '';
-var wsbusy = false;
-
 function checkConnection() {
 		try {
 			var networkState = navigator.connection.type;
@@ -34,8 +32,6 @@ function checkConnection() {
 		}
 
 }
-
-
 function initKey() {
 	if (!localStorage.enckey) {
 		enckey = generatePrivateKey(50);
@@ -97,7 +93,6 @@ function Enc(strIn) {
 }
 function Decr(strIn) 
 {
-
 	try 
 	{
 		if (strIn==null || strIn=='') {

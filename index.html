@@ -48,7 +48,6 @@ function Validated(xml) {
 		$('#menu').hide();
 		Redirect(0);
 	}
-	wsbusy = false;
 
 }
 function shakeEventDidOccur () 
@@ -75,8 +74,6 @@ function gotCurrentStandby(xml) {
 		$('#header2').html('OTR Standby '  + spac +  b + spac + current_year + ' week '  + current_week  );
 		doLayout();
 	});
-    wsbusy = false;
-
 }
 function load(url) {
 	location = url;

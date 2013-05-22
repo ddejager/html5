@@ -13,10 +13,11 @@
         Dennis de Jager
     </author>
 	<plugins>
-	<plugin name="NetworkStatus" value="CDVConnection" />
+		<plugin name="NetworkStatus" value="CDVConnection" />
+		<plugin name="Device" value="org.apache.cordova.Device" />
 	</plugins>
 	
-        <access origin="https://service.odfjell.nl" />
+    <access origin="https://service.odfjell.nl" />
 	
 	<!-- Icons -->
 	<icon src="gap/icon/Logo_57x57.png" gap:platform="ios" width="57" height="57" />
@@ -25,7 +26,6 @@
 	<icon src="gap/icon/Logo_144x144.png" gap:platform="ios" width="144" height="144" />
 
 	<!-- Splash screens -->
-	
 	<preference name="splash-screen-duration" value="7500" />
 
 	<!-- Default iphone screen, and 2x (double resolution) -->

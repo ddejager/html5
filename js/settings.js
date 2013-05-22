@@ -5,17 +5,26 @@ var enckey = '';
 var platform ='';
 var devicename = '???';
 var devicemodel = '';
-
+var online = true;
 var hasPhoneGap = false;
 
 document.addEventListener("deviceready", onDeviceReady, false);
-
 function onDeviceReady() {
-	hasPhoneGap = true;
-	platform = device.platform;
-	devicename = device.name; // iPhone / iPad
-	devicemodel = device.model;
-	
+	try {hasPhoneGap = true;} catch (err) {}
+	try {platform = device.platform;} catch (err) {}
+	try {devicename = device.name; } catch (err) {}
+	try {devicemodel = device.model;} catch (err) {}
+	try {document.addEventListener("online", wentOnline, false);} catch (err) {}
+	try {document.addEventListener("offline", wentOffline, false);} catch (err) {}
+}
+function wentOffline() {
+	online = false;
+	checkConnection();
+
+}
+function wentOnline() {
+	online = true;
+	checkConnection();
 }
 function checkConnection() {
 		try {
@@ -142,7 +151,6 @@ function make_base_auth(user, password) {
     return "Basic " + hash;
 }
 function generic_ajax_sync(wsurl,data,funct) {
-    
 	var wscall= wsbase + wsurl;
 	$.ajax( {	
 		url:wscall,
@@ -164,7 +172,6 @@ function generic_ajax_sync(wsurl,data,funct) {
 	});
 }
 function generic_ajax(wsurl,data,funct) {
-                
 	var wscall= wsbase + wsurl;
 	$.ajax( {	
 		url:wscall,

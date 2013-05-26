@@ -1,0 +1,63 @@
+DETAILS
+-------
+This pack will give you coloured versions of the status bar icons. There are eight colours in total [Blue, Green, Red, Orange, HTC Orange, Pink, Yellow, Black+White]. You can even mix the colours. I didn't create the original Blue icons, I created the other colours and assembled this package. The originals are by syn0ptic and NeoRame so thank them as well.
+
+Please feel free to distribute this but keep this file unmodified.
+
+INSTRUCTIONS
+------------
+Copy the UIImages, Folder and Bundles Folders into the root of your theme. Respring. Enjoy!
+
+CHANGELOG
+---------
+v3.3 (18/11/10)
+Added MCleaner icons
+New Main Image
+
+v.3.2 (17/11/10)
+Added HTC Orange version
+
+v.3.1 (16/11/10)
+Added a Black+White version
+
+v.3 (15/11/10)
+Added SD Icons
+Added syn0ptics alternate 0 signal bars icon
+
+v.2.1
+Fixed a Battery issue where when fully charged the icon still showed a gap
+
+v.2
+Added LockInfo Status Bar Icons [Originals by NeoRame]
+	- Missed Call
+	- Mail
+	- SMS
+	- Notification
+	- Silent
+	- Voicemail
+
+v.1
+Standard Status Bar Icons [Originals by syn0ptic]
+	- Signal Bars
+	- Wifi Bars
+	- EDGE
+	- GPRS
+	- Location Services
+	- Orientation Lock
+	- Bluetooth
+	- Airplane Mode
+	- Alarm Set
+	- Lock Status
+	- iPod Play
+	- Battery
+	- Battery Charging
+	- Battery Percentage
+
+THANKS
+-------
+syn0ptic 		- http://macthemes.net/forum/profile.php?id=47805
+NeoRame 		- http://macthemes.net/forum/profile.php?id=35074
+
+CREATED BY
+----------
+Gaz/janullrich	- http://macthemes.net/forum/profile.php?id=47052

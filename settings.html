@@ -9,10 +9,12 @@
 <link rel="stylesheet"  href="jquery.mobile.min.css"/>
 <link rel="stylesheet" type="text/css" href="odfjell_ie.css" />
 <script type="text/javascript" src="js/sjcl.js"></script>
+<script src="phonegap.js"></script>
 <script src="js/settings.js" type="text/javascript"></script>
 <script src="js/jquery-1.9.1.min.js" type="text/javascript"></script>
 <script src="js/jquery.mobile-1.3.1.min.js" type="text/javascript"></script>
 <script src="js/datef.js" type="text/javascript"></script>
+
 <script type="text/javascript" defer="defer">
 var stime;
 var selected_object;
@@ -66,24 +68,27 @@ function Load() {
 	$('#ws_url').val(Decr(localStorage.ws_url));
 	$('#ws_username').val(Decr(localStorage.ws_username));
 	$('#ws_password').val(Decr(localStorage.ws_password));
+	$('#ws_apikey').val(Decr(localStorage.ws_apikey));
 	$('#alg_username').val(Decr(localStorage.alg_username));
 	$('#alg_password').val(Decr(localStorage.alg_password));
+	
 }
 function SaveWS() {
 	localStorage.ws_url= Enc($('#ws_url').val());
 	wsbase = $('#ws_url').val();
 	localStorage.ws_username = Enc($('#ws_username').val());
 	localStorage.ws_password = Enc($('#ws_password').val());
+	localStorage.ws_apikey = Enc($('#ws_apikey').val());
 	generic_ajax('standby.asmx/TestConnection',null,testedConnection);
 }
 function testedConnection(xml) {
-	alert('Webservice instellingen zijn getest en opgeslagen!');
+	alert('Webservice instellingen zijn getestt en opgeslagen!');
 	
 
 }
 
 function SaveAccount() {
-	if ( Decr(localStorage.ws_username)=='' || Decr(localStorage.ws_password)=='') 
+	if ( Decr(localStorage.ws_username)=='' || Decr(localStorage.ws_password)=='' || Decr(localStorage.ws_apikey=='') ) 
 	{
 		alert('U dient eerst de webservice instellingen in te vullen, voordat u uw account in kan vullen!');
 		return;
@@ -107,9 +112,9 @@ function gotAD(xml) {
 		generic_ajax_sync('standby.asmx/GetGroupByMember',{logon:$('#alg_username').val(),memid:''},gotGroupsSave); 
 	}
 	else {
+		//localStorage.alg_username = Enc($('#alg_username').val());
 		alert('Foutief wachtwoord, controleer het, en probeer opnieuw om op te slaan!' );
 	}
-	
 }
 function gotGroupsSave(xml) {
 	var found_objects = $(xml).find("GroupMembers");
@@ -254,6 +259,8 @@ BrowserDetect.init();
 					<li><input type=text id="ws_username" /></li>
 					<li data-theme="c" data-role="list-divider">Password (voor webservice):</li>
 					<li><input type=password id="ws_password" /></li>
+					<li data-theme="c" data-role="list-divider">API Key(voor webservice):</li>
+					<li><input type=text id="ws_apikey" /></li>
 					<li data-theme="c" ><button data-theme="a"  onclick=SaveWS() value="Opslaan" id="Button_Save_1"></button></li>
 				</ul>
 			</div><!-- /collapsible -->	

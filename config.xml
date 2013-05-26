@@ -8,7 +8,8 @@
     <name>OTR Standby</name>
     <description>
         App for handling incidents while we are on callout duty.
-	</description>
+    </description>
+    <preference name="phonegap-version" value="2.7.0" />
     <author href="https://build.phonegap.com" email="dennis.de.jager@odfjell.com">
         Dennis de Jager
     </author>

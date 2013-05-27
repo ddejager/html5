@@ -7,6 +7,7 @@ var devicename = '???';
 var devicemodel = '';
 var isonline = true;
 var hasPhoneGap = false;
+var appVersion='';
 
 
 // Try catch block, so this call won't result in errors (only ment for mobile/gap use!
@@ -202,6 +203,10 @@ function generic_ajax_sync(wsurl,data,funct) {
 }
 function generic_ajax(wsurl,data,funct) {
 	var wscall= wsbase + wsurl;
+	
+	if (wsurl.search('@@')>=0){
+		wscall = wsurl.substring(2);
+	}
 	$.ajax( {	
 		url:wscall,
 		type:'GET',
@@ -221,5 +226,8 @@ function generic_ajax(wsurl,data,funct) {
 	});
 }
 function getStatusInfo() {
-	return 'Ingelogd: ' + Decr(localStorage.alg_username) + ' || Webservice gebruikt:' +  Decr(localStorage.ws_username) + ' || Groep:' + Decr(localStorage.groupname) + ' || Device:' + devicename + ' ' + devicemodel;
+	var retVal = 'Ingelogd: ' + Decr(localStorage.alg_username) + ' || Webservice gebruikt:' +  Decr(localStorage.ws_username) + ' || Groep:' + Decr(localStorage.groupname) + ' || Device:' + devicename + ' ' + devicemodel;
+	if (appVersion!='') 
+		retVal = retVal + ' || Version:' + appVersion;
+	return retVal;
 }

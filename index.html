@@ -30,12 +30,12 @@
 var sw,sh;
 var netstate = '';
 
+
 $(document).ready(function() 
 {
 	sw = $(this).width();
 	sh = $(this).height();
 	$('#menu').hide();
-	
 	Validate(Validated);
 	
 });
@@ -46,7 +46,8 @@ function Validated(xml) {
 		addShake();	
 		//setTimeout(afterVal,4000);
 		generic_ajax('standby.asmx/GetCurrentStandbyNow',null,gotCurrentStandby);
-		$('#footer').html(getStatusInfo());
+		generic_ajax('@@config.xml',null,gotConfig);
+		
 		// Try catch block, so this call won't result in errors (only ment for mobile/gap use!
 		$('#menu').show();
 		$('#refreshbutton').remove();
@@ -55,6 +56,10 @@ function Validated(xml) {
 		$('#menu').hide();
 		Redirect(0);
 	}
+}
+function gotConfig(xml) {
+	appVersion = $(xml).find('widget').attr('version');
+	$('#footer').html(getStatusInfo());
 }
 function shakeEventDidOccur () 
 {

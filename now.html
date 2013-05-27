@@ -52,7 +52,7 @@ function Validated(xml) {
 	if (res=='True') {
 		generic_ajax('standby.asmx/GetCurrentStandbyNow',null,gotCurrentStandby);
 		$('#footer').html(getStatusInfo());
-		window.addEventListener('shake', shakeEventDidOccur, false);
+		addShake();	
 	}
 	else {
 		$('#refreshbutton').remove();

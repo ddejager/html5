@@ -34,21 +34,27 @@ $(document).ready(function()
 {
 	sw = $(this).width();
 	sh = $(this).height();
+	$('#menu').hide();
+	
 	Validate(Validated);
 	
 });
 function Validated(xml) {
 	var res = $(xml).find("string").text();
 	if (res=='True') {
+		$('#refreshbutton').attr('src','images/ajax-loader.gif');
+		addShake();	
+		//setTimeout(afterVal,4000);
 		generic_ajax('standby.asmx/GetCurrentStandbyNow',null,gotCurrentStandby);
 		$('#footer').html(getStatusInfo());
-		window.addEventListener('shake', shakeEventDidOccur, false);
+		// Try catch block, so this call won't result in errors (only ment for mobile/gap use!
+		$('#menu').show();
+		$('#refreshbutton').remove();
 	}
 	else {
 		$('#menu').hide();
 		Redirect(0);
 	}
-
 }
 function shakeEventDidOccur () 
 {
@@ -88,6 +94,7 @@ function doLayout() {
 	<div>
 		<h1 id="topbar" class='ui-title' data-theme="a" role='heading' aria-level='1'><div id="header2">OTR Standby</div>
 		<img id="netstatus" src="gap/net/inv.gif" class="ui-btn-right" >
+		<img height=32px id="refreshbutton" src="" class="ui-btn-right" ></a>
 		</h1>
 	</div>
 </div>

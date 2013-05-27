@@ -32,19 +32,16 @@ $(document).ready(function()
 	Validate(Validated);
 	if (hasPhoneGap) 
 		$('#header2').append('(p)');
-	
 });
-
 function shakeEventDidOccur () {
 		getAll();
 }
-
 function Validated(xml) {
 	var res = $(xml).find("string").text();
 	if (res=='True') {
 		getAll();
 		$('#footer').html(getStatusInfo());
-		window.addEventListener('shake', shakeEventDidOccur, false);
+		addShake();	
 	}
 	else {
 		$('#refreshbutton').remove();
@@ -52,7 +49,6 @@ function Validated(xml) {
 		Redirect(0);
 	}
 }
-
 function getAll() {
 	$('#content').html('');
 	getLayout();
@@ -62,9 +58,7 @@ function getAll() {
 		getNetworkInfo();
 		getPhoneGap();
 	}
-	
 	getLocalStorage();
-	
 	getCurrentProvider();
 	getSMSCredits();
 	testConnection();
@@ -84,9 +78,7 @@ function getPhoneGap() {
 	ht = ht + '<tr><td class="colsheader" colspan="2">End of Device info</td></tr>\n';
 	ht = ht + '</table>\n';
 	$('#content').append(ht);
-
 }
-
 function getNetworkInfo() {
 	var ht = '';
 	ht = ht + '<table>\n';
@@ -107,9 +99,6 @@ function getLocalStorage()
 	ht = ht + '<tr>\n';
 	ht = ht + '<td class="colsheader" colspan="2">LocalStorage contents</td>\n';
 	ht = ht + '</tr>\n';
-	
-	
-	
 	try {
 		for (var i = 0; i < localStorage.length; i++)
 		{

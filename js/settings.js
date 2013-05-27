@@ -8,7 +8,18 @@ var devicemodel = '';
 var isonline = true;
 var hasPhoneGap = false;
 
-document.addEventListener("deviceready", onDeviceReady, false);
+
+// Try catch block, so this call won't result in errors (only ment for mobile/gap use!
+try { document.addEventListener("deviceready", onDeviceReady, false); }
+catch (err) {}
+
+
+function addShake() {
+	try {
+		window.addEventListener('shake', shakeEventDidOccur, false);
+	}
+	catch (err) {}
+}
 function onDeviceReady() {
 	try {
 		hasPhoneGap = true;
@@ -106,12 +117,24 @@ function generatePrivateKey(limit) {
   
 
 function Validate(funct) {
-	generic_ajax_sync('standby.asmx/ValidateUser',
-					{	strAuth:'test',
-						strUser:Decr(localStorage.alg_username),			
-						strPassword:Decr(localStorage.alg_password)
-					}, 	    
-					funct);
+
+	if (Decr(localStorage.alg_username)=='' || Decr(localStorage.alg_password) =='') {
+		alert('Vul uw username/password in bij Instellingen!');
+		location='settings.html';
+	}
+	else if (Decr(localStorage.ws_username)=='' || Decr(localStorage.ws_password) =='') {
+		alert('Vul de username/password in voor de webservices bij Instellingen!');
+		location='settings.html';
+	}
+	else
+	{
+		generic_ajax_sync('standby.asmx/ValidateUser',
+						{	strAuth:'test',
+							strUser:Decr(localStorage.alg_username),			
+							strPassword:Decr(localStorage.alg_password)
+						}, 	    
+						funct);
+	}
 }
 try
 {

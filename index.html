@@ -96,10 +96,10 @@ function doLayout() {
 </HEAD>
 <body>
 <div  data-theme="a" data-role="header" data-position="fixed" data-tap-toggle="false">
-	<div>
-		<h1 id="topbar" class='ui-title' data-theme="a" role='heading' aria-level='1'><div id="header2">OTR Standby</div>
-		<img id="netstatus" src="gap/net/inv.gif" class="ui-btn-right" >
-		<img height=32px id="refreshbutton" src="" class="ui-btn-right" ></a>
+		<h1 id="topbar" data-theme="a" data-role='content' aria-level='1'>
+			<div id="header2">OTR Standby</div>
+			<img id="netstatus" src="gap/net/inv.gif" class="ui-btn-right">
+			<img height=32px id="refreshbutton" src="" class="ui-btn-right">
 		</h1>
 	</div>
 </div>
@@ -113,7 +113,6 @@ function doLayout() {
 	<a data-icon="grid" data-role="button" onclick="load('debug.html');" href="#" >Debug info</a>
 </div>
 <div  data-theme="a" data-role="content" data-position="fixed" data-tap-toggle="false">
-<div id="bottombar" calss="ui-title" data-theme="a" role="heading"></div>
 <div id="footer">--</div>
 </div>
 

@@ -215,7 +215,7 @@ function gotAlternateVersion(xhr, status) {
 	ht = ht + '<tr><td class="colheader">config.xml</td><td class="cell_s"><textarea id="xmleditor" rows=10 cols=140></textarea></td></tr>\n' ;
 	ht = ht + '</table>\n';
 	$('#content').append(ht);
-	$('#xmleditor').html(xhr.responseText);
+	$('#xmleditor').text(xhr.responseText);
 }
 /*
 $(document).ajaxError(function(event, request, settings) {

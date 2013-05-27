@@ -46,7 +46,7 @@ function Validated(xml) {
 		addShake();	
 		//setTimeout(afterVal,4000);
 		generic_ajax('standby.asmx/GetCurrentStandbyNow',null,gotCurrentStandby);
-		generic_ajax('@@config.xml',null,gotConfig);
+		generic_ajax('@@version.xml',null,gotConfig);
 		
 		// Try catch block, so this call won't result in errors (only ment for mobile/gap use!
 		$('#menu').show();
@@ -58,7 +58,7 @@ function Validated(xml) {
 	}
 }
 function gotConfig(xml) {
-	appVersion = $(xml).find('widget').attr('version');
+	appVersion = $(xml).find('version').text();
 	$('#footer').html(getStatusInfo());
 }
 function shakeEventDidOccur () 

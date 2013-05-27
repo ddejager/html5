@@ -51,6 +51,8 @@ function Validated(xml) {
 		
 		getData();
 		getCurrentStandby();
+		getVersion();
+		
 		$('#footer').html(getStatusInfo());
 		addShake();	
 		
@@ -154,9 +156,11 @@ function gotCalls(xml) {
 	$('#refreshbutton').attr('src','images/Refresh.png');
 	$('#call_list').listview('refresh');
 }
+/*
 $(document).ajaxError(function(event, request, settings) {
   alert( "<li>Error requesting page " + settings.url + "</li>" );
 });
+*/
 
 function Click(obj,id) {
 

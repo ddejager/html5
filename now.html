@@ -51,8 +51,10 @@ function Validated(xml) {
 	var res = $(xml).find("string").text();
 	if (res=='True') {
 		generic_ajax('standby.asmx/GetCurrentStandbyNow',null,gotCurrentStandby);
+		getVersion();
 		$('#footer').html(getStatusInfo());
 		addShake();	
+		
 	}
 	else {
 		$('#refreshbutton').remove();
@@ -156,9 +158,12 @@ function gotCalls(xml) {
 	$('#refreshbutton').attr('src','images/Refresh.png');
 	$('#call_list').listview('refresh');
 }
+
+/*
 $(document).ajaxError(function(event, request, settings) {
   alert( "<li>Error requesting page " + settings.url + "</li>" );
 });
+*/
 
 function Click(obj,id) {
 	$(obj).children().addClass('bgorange');

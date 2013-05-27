@@ -33,6 +33,7 @@ $(document).ready(function()
 	if ( $('#alg_username').val()!='') 
 	{
 		generic_ajax_sync('standby.asmx/GetGroupByMember',{logon:$('#alg_username').val(),memid:''},gotGroups); 
+		getVersion();
 		
 		
 	}

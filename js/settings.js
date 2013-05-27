@@ -202,11 +202,12 @@ function generic_ajax_sync(wsurl,data,funct) {
 	});
 }
 function generic_ajax(wsurl,data,funct) {
-	var wscall= wsbase + wsurl;
+	var wscall = '';
 	
-	if (wsurl.search('@@')>=0){
+	if (wsurl.search('@@')>=0)
 		wscall = wsurl.substring(2);
-	}
+	else
+		wscall = wsbase + wsurl;
 	$.ajax( {	
 		url:wscall,
 		type:'GET',
@@ -231,3 +232,24 @@ function getStatusInfo() {
 		retVal = retVal + ' || Version:' + appVersion;
 	return retVal;
 }
+function getVersion() {
+
+	try {
+		$.ajax( {	
+			url:'config.xml',
+			type:'GET',
+			cache:false,
+			async:true,
+			success:gotVersion,
+			error: function (request, status, error) {},
+			dataType:'xml'
+		});
+	}
+	catch(err) {}
+}
+function gotVersion(xml) {
+	appVersion = $(xml).find('widget').attr('version');
+	
+	$('#footer').html(getStatusInfo());
+}
+

@@ -44,11 +44,9 @@ function Validated(xml) {
 	if (res=='True') {
 		$('#refreshbutton').attr('src','images/ajax-loader.gif');
 		addShake();	
-		//setTimeout(afterVal,4000);
 		generic_ajax('standby.asmx/GetCurrentStandbyNow',null,gotCurrentStandby);
-		generic_ajax('@@version.xml',null,gotConfig);
-		
-		// Try catch block, so this call won't result in errors (only ment for mobile/gap use!
+		getVersion();
+		$('#footer').html(getStatusInfo());
 		$('#menu').show();
 		$('#refreshbutton').remove();
 	}
@@ -56,10 +54,6 @@ function Validated(xml) {
 		$('#menu').hide();
 		Redirect(0);
 	}
-}
-function gotConfig(xml) {
-	appVersion = $(xml).find('version').text();
-	$('#footer').html(getStatusInfo());
 }
 function shakeEventDidOccur () 
 {

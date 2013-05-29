@@ -34,7 +34,7 @@ function onDeviceReady() {
 		checkConnection();
 		
 		// Added some extra auth methods to get around the Android 401 errors, but not needed for ios, so disabled here.. 
-		if (platform=='IOS') 
+		if (platform=='IOS' || platform=='') 
 			ext_auth = false;
 	}
 	catch (err) {
@@ -200,11 +200,7 @@ function generic_ajax_sync(wsurl,data,funct) {
 		beforeSend:extauth,
 		timeout:ajax_timeout,
 		error: function (request, status, error,exception) {
-			alert('De webservice kon niet worden aangeroepen.\nControleer je verbinding, en/of de gebruikernaam en wachtwoord, en probeer opnieuw\n' +
-				  'url:' + wscall + '\n'+ 
-				  'data:' + data + '\n'+ 
-				  'status:' + request.status + '\n'+ 
-				  'exception:' + exception);
+			handleError(wscall,data,request,status,error,exception);
 		},
 		dataType:'xml'
 	});
@@ -227,14 +223,22 @@ function generic_ajax(wsurl,data,funct) {
 		username:Decr(localStorage.ws_username),
 		password:Decr(localStorage.ws_password),
 		success:funct,
-		error: function (request, status, error) {
-			alert('De webservice kon niet worden aangeroepen.\nControleer je verbinding, en/of de gebruikernaam en wachtwoord, en probeer opnieuw\n' +
-				  'url:' + wscall + '\n'+ 
-				  'data:' + data + '\n'+ 
-				'status:' + request.status);
+		error: function (request, status, error,exception) {
+			handleError(wscall,data,request,status,error,exception);
 		},
 		dataType:'xml'
 	});
+}
+function handleError(wscall,data,request, status, error,exception) {
+	alert('De webservice kon niet worden aangeroepen.\nControleer je verbinding, en/of de gebruikernaam en wachtwoord, en probeer opnieuw\n' +
+			  'url:' + wscall + '\n'+ 
+			  'data:' + data + '\n'+ 
+			  'platform:' + platform + '\n'+ 
+			  'ext auth:' + ext_auth + '\n'+ 
+			  'status:' + request.status + '\n'+ 
+			  'exception:' + exception);
+		
+
 }
 function getStatusInfo() {
 	var retVal = 'Ingelogd: ' + Decr(localStorage.alg_username) + ' || Webservice gebruikt:' +  Decr(localStorage.ws_username) + ' || Groep:' + Decr(localStorage.groupname) + ' || Device:' + devicename + ' ' + devicemodel;
@@ -253,7 +257,9 @@ function getVersion() {
 			beforeSend:extauth,
 			timeout:ajax_timeout,
 			success:gotVersion,
-			error: function (request, status, error) {},
+			error: function (request, status, error,exception) {
+				handleError('config.xml','',request,status,error,exception);
+			},
 			dataType:'xml'
 		});
 	}

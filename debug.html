@@ -63,10 +63,8 @@ function getAll() {
 	getCurrentProvider();
 	getSMSCredits();
 	getVersion();
-	getAlternateVersion();
-	
-	
 	testConnection();
+	getAlternateVersion();
 }
 function getPhoneGap() {
 	var ht = '';
@@ -210,7 +208,7 @@ function gotAlternateVersion(xhr, status) {
 	var ht = '';
 	ht = ht + '<table>\n';
 	ht = ht + '<tr>\n';
-	ht = ht + '<td class="colsheader" colspan="2">Client info</td>\n';
+	ht = ht + '<td class="colsheader" colspan="2">CONFIG.XML</td>\n';
 	ht = ht + '</tr>\n';
 	ht = ht + '<tr><td class="colheader">config.xml</td><td class="cell_s"><textarea id="xmleditor" rows=10 cols=140></textarea></td></tr>\n' ;
 	ht = ht + '</table>\n';

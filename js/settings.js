@@ -132,10 +132,15 @@ function Validate(funct) {
 
 	if (Decr(localStorage.alg_username)=='' || Decr(localStorage.alg_password) =='') {
 		alert('Vul uw username/password in bij Instellingen!');
+		try{navigator.splashscreen.hide();}
+		catch(err) {}
 		location='settings.html';
 	}
 	else if (Decr(localStorage.ws_username)=='' || Decr(localStorage.ws_password) =='') {
 		alert('Vul de username/password in voor de webservices bij Instellingen!');
+		try{navigator.splashscreen.hide();}
+		catch(err) {}
+		
 		location='settings.html';
 	}
 	else

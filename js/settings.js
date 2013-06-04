@@ -3,7 +3,7 @@ var netstaticon = '';
 var netstatdesc = '';
 var enckey = '';
 var platform ='';
-var devicename = '???';
+var devicename = 'PC';
 var devicemodel = '';
 var isonline = true;
 var hasPhoneGap = false;
@@ -268,7 +268,7 @@ function handleError(wscall,data,request, status, error,exception) {
 
 }
 function getStatusInfo() {
-	var retVal = 'Ingelogd: ' + Decr(localStorage.alg_username) + ' || Webservice gebruikt:' +  Decr(localStorage.ws_username) + ' || Groep:' + Decr(localStorage.groupname) + ' || Device:' + devicename + ' ' + devicemodel;
+	var retVal = 'Ingelogd: ' + Decr(localStorage.alg_username) + ' || ws acc:' +  Decr(localStorage.ws_username) + ' || Groep:' + Decr(localStorage.groupname) + ' || Device:' + devicename + ' ' + devicemodel;
 	if (appVersion!='') 
 		retVal = retVal + ' || Version:' + appVersion;
 	return retVal;

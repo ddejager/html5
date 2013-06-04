@@ -44,7 +44,7 @@ function Validated(xml) {
 	if (res=='True') {
 		$('#refreshbutton').attr('src','images/ajax-loader.gif');
 		addShake();	
-		generic_ajax('standby.asmx/GetCurrentStandbyNow',null,gotCurrentStandby);
+		generic_ajax('standby.asmx/GetCurrentStandbyNow',{iGroup:Decr(localStorage.group)} ,gotCurrentStandby);
 		getVersion();
 		$('#footer').html(getStatusInfo());
 		$('#menu').show();
@@ -52,12 +52,14 @@ function Validated(xml) {
 	}
 	else {
 		$('#menu').hide();
-		Redirect(0);
+		alert('Uw gebruikernaam&wachtwoord zijn niet correct, pas de instellingen aan en probeer opnieuw');
+		
+		//Redirect(0);
 	}
 }
 function shakeEventDidOccur () 
 {
-	generic_ajax('standby.asmx/GetCurrentStandbyNow',null,gotCurrentStandby);
+	generic_ajax('standby.asmx/GetCurrentStandbyNow',{iGroup:Decr(localStorage.group)},gotCurrentStandby);
 	$('#footer').html(getStatusInfo());
 	checkConnection();
 }
@@ -67,6 +69,8 @@ function gotCurrentStandby(xml) {
 	{
 		current_year = $(this).find('CurrentYear').text();
 		current_week = $(this).find('CurrentWeek').text();
+		var groupname = $(this).find('GroupName').text();
+		var groupid = $(this).find('GroupID').text();
 		var b = $(this).find('BossName').text();
 		var r = $(this).find('ReplaceName').text();
 		if (r!='') 
@@ -76,7 +80,15 @@ function gotCurrentStandby(xml) {
 			
 			spac = '<br>';	
 		}
-		$('#header2').html('OTR Standby '  + spac +  b + spac + current_year + ' week '  + current_week  );
+		$('#header2').html(groupname  + spac +  b + spac + current_year + ' week '  + current_week  );
+		
+		if (groupid==1) {
+			$('#Unlock_Button').show();
+		}
+		else
+		{
+			$('#Unlock_Button').hide();
+		}
 		doLayout();
 	});
 }
@@ -91,7 +103,7 @@ function doLayout() {
 <body>
 <div  data-theme="a" data-role="header" data-position="fixed" data-tap-toggle="false">
 		<h1 id="topbar" data-theme="a" data-role='content' aria-level='1'>
-			<div id="header2">OTR Standby</div>
+			<div id="header2">Mobile Standby</div>
 			<img id="netstatus" src="gap/net/inv.gif" class="ui-btn-right">
 			<img height=32px id="refreshbutton" src="" class="ui-btn-right">
 		</h1>
@@ -102,7 +114,7 @@ function doLayout() {
 	<div class="logo_image"><img class="logo_image" width="300px" src="images/tank.png"  alt="Image Header" ></div>
 	<a data-icon="grid" data-role="button" onclick="load('now.html');" href="#" >Huidige Dienst</a>
 	<a data-icon="grid" data-role="button" onclick="load('last10.html');" href="#" >Laatste 10 Calls</a>
-	<a data-icon="grid" data-role="button" onclick="load('locked.html');" href="#" >Unlock user(s)</a>
+	<a id="Unlock_Button" data-icon="grid" data-role="button" onclick="load('locked.html');" href="#" >Unlock user(s)</a>
 	<a data-icon="grid" data-role="button" onclick="load('settings.html');" href="#" >Instellingen</a>
 	<a data-icon="grid" data-role="button" onclick="load('debug.html');" href="#" >Debug info</a>
 </div>

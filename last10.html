@@ -27,6 +27,10 @@ var stime;
 var selected_object;
 var sh,sw;
 
+var switchdata = -1;
+var groups = new Array();
+
+
 
 $(document).ready(function() 
 {
@@ -34,7 +38,7 @@ $(document).ready(function()
 	sh = $(this).height();
 	sw = $(this).width();
 	Validate(Validated);
-
+	$('#SwitchButton').text( Decr(localStorage.groupname));
 	$( "#popupdiv" ).bind({
 		popupafterclose: function(event, ui) 
 		{
@@ -51,6 +55,7 @@ function Validated(xml) {
 		
 		getData();
 		getCurrentStandby();
+		getGroups();
 		getVersion();
 		
 		$('#footer').html(getStatusInfo());
@@ -67,6 +72,40 @@ function Validated(xml) {
 
 	
 }
+function getGroups() {
+	generic_ajax('standby.asmx/GetGroups',{onlymain:true},gotGroups);
+}
+function gotGroups(xml) {
+	var found_objects = $(xml).find("Group");
+	var tel = 0;
+	found_objects.each(function() 
+	{
+		var groupid = $(this).find('id').text();
+		var groupname = $(this).find('Name').text();
+		
+		if (groupid==Decr(localStorage.group))
+			switchdata=tel;
+			
+		groups[tel] = {gid:groupid,gname:groupname};
+		tel++;
+	});
+}
+function getDataSwitch() {
+	switchdata++;
+
+	if (switchdata>groups.length-1)
+		switchdata = -1;
+	if (switchdata==-1)  {
+		getDataAll();
+		$('#SwitchButton').text('Alles');
+	}
+	else {
+		var curgroup= groups[switchdata];
+		getData2(curgroup.gid);
+		$('#SwitchButton').text(curgroup.gname);
+	}
+}
+
 function shakeEventDidOccur () {
 	getData();
 	getCurrentStandby();
@@ -76,11 +115,24 @@ function getData() {
 	$('#topbar').children().addClass('bgred');
 	$('#refreshbutton').attr('src','images/ajax-loader.gif');
 	stime= new Date().getTime();
-	generic_ajax('standby.asmx/Get10Calls',{CallStatus:-1},gotCalls);
-
+	generic_ajax('standby.asmx/Get10Calls',{iGroup:Decr(localStorage.group), CallStatus:-1},gotCalls);
 }
+function getData2(group) {
+	$('#topbar').children().addClass('bgred');
+	$('#refreshbutton').attr('src','images/ajax-loader.gif');
+	stime= new Date().getTime();
+	generic_ajax('standby.asmx/Get10Calls',{iGroup:group, CallStatus:-1},gotCalls);
+}
+function getDataAll() {
+	$('#topbar').children().addClass('bgred');
+	$('#refreshbutton').attr('src','images/ajax-loader.gif');
+	stime= new Date().getTime();
+	generic_ajax('standby.asmx/Get10Calls',{iGroup:-1, CallStatus:-1},gotCalls);
+}
+
+
 function getCurrentStandby() {
-	generic_ajax('standby.asmx/GetCurrentStandbyNow',null,gotCurrentStandby);
+	generic_ajax('standby.asmx/GetCurrentStandbyNow',{iGroup:Decr(localStorage.group)},gotCurrentStandby);
 }
 function gotCurrentStandby(xml) {
 	var found_objects = $(xml).find("Duty");
@@ -232,19 +284,26 @@ function popLog() {
 <div  data-role="header" data-position="fixed" data-tap-toggle="false">
 	<div>
 		<h1 id="topbar" class='ui-title' role='heading' aria-level='1'><div id="pagetitle">Laatste 10 standby Calls</div>
+		<a id="SwitchButton" style="left:50px;height:25px;width:75px;" class="ui-btn-left" data-role="button" href="#" onclick="getDataSwitch();"></a>
 		<a href="#" onclick="goBack();"  class="ui-btn-left"  data-role="button" data-icon="back" data-iconpos="notext" data-theme="a" data-inline="true" ></a>
 		<a href="#" onclick="getData();getCurrentStandby();"><img height=32px id="refreshbutton" src="images/Refresh.png" class="ui-btn-right" ></a>
+		
 		</h1>
 	</div>
+	
+	
 </div>
 <!-- Content -->
 <div id="content" data-role="content" data-scrollz="pull">
+	
 	<ul data-role="listview" data-divider-theme="e" >
 		<li id="header2" class='ui-title' data-role='list-divider' aria-level='1'></li>
+		
 		</ul><br>&nbsp;<br>
 		<div id="spacer"></div>
 		<ul id="call_list" data-role="listview">
 		</ul>
+		
 </div>
 
 <div id="popupdiv" data-role="popup">

@@ -39,46 +39,15 @@ $(document).ready(function()
 	}
 	
 });
-function testAccount() {
-	$('#topbar').children().addClass('bgred');
-	$('#refreshbutton').attr('src','images/ajax-loader.gif');
-
-	generic_ajax_sync(
-					'standby.asmx/ValidateUser',
-					{strAuth:'test',strUser:Decr(localStorage.alg_username),strPassword:Decr(localStorage.alg_password)}, 	    					
-					testedAccount); 
-}
-function testedAccount(xml) {
-	$('#topbar').children().removeClass('bgred');
-	$('#refreshbutton').attr('src','images/Refresh.png');
-	
-	if ($(xml).find("string").text()=='True') 
-		alert('Usernaam/wachtwoord zijn goed!');
-	else
-		alert('Usernaam/wachtwoord zijn niet goed!');
-		
-}
-function testWS() {
-	$('#topbar').children().addClass('bgred');
-	$('#refreshbutton').attr('src','images/ajax-loader.gif');
-	generic_ajax_sync(
-					'standby.asmx/ValidateUser',
-					{strAuth:'test',strUser:Decr(localStorage.alg_username),strPassword:Decr(localStorage.alg_password)}, 	    					
-					testedWS); 
-}
-function testedWS(xml) {
-	$('#topbar').children().removeClass('bgred');
-	$('#refreshbutton').attr('src','images/Refresh.png');
-	alert('Test geslaagd!');
-}
-
 function Load() {
+	LoadAlg();
 	$('#ws_url').val(Decr(localStorage.ws_url));
 	$('#ws_username').val(Decr(localStorage.ws_username));
 	$('#ws_password').val(Decr(localStorage.ws_password));
 	$('#ws_apikey').val(Decr(localStorage.ws_apikey));
 	$('#alg_username').val(Decr(localStorage.alg_username));
 	$('#alg_password').val(Decr(localStorage.alg_password));
+	
 	
 }
 function SaveWS() {
@@ -94,7 +63,15 @@ function testedConnection(xml) {
 	
 
 }
-
+function LoadAlg() {
+		var t = localStorage.alg_authmethode;
+		if (t==null || t=='') 
+			localStorage.alg_authmethode = -1;
+		$('#alg_authmethode').val(localStorage.alg_authmethode);
+}
+function SaveAlg() {
+	localStorage.alg_authmethode = $('#alg_authmethode').val();
+}
 function SaveAccount() {
 	if ( Decr(localStorage.ws_username)=='' || Decr(localStorage.ws_password)=='' || Decr(localStorage.ws_apikey=='') ) 
 	{
@@ -106,8 +83,8 @@ function SaveAccount() {
 		$('#topbar').children().addClass('bgred');
 		$('#refreshbutton').attr('src','images/ajax-loader.gif');
 		generic_ajax_sync(
-						'standby.asmx/ValidateUser',
-						{strAuth:'test',strUser:$('#alg_username').val(),strPassword:$('#alg_password').val()}, 	    					
+						'standby.asmx/ValidateUserEnc',
+						{strAuth:'test',strUser:s_enc($('#alg_username').val()),strPassword:s_enc($('#alg_password').val())}, 	    					
 						gotAD); 
 	}
 	else
@@ -120,20 +97,26 @@ function gotAD(xml) {
 		generic_ajax_sync('standby.asmx/GetGroupByMember',{logon:$('#alg_username').val(),memid:''},gotGroupsSave); 
 	}
 	else {
-		//localStorage.alg_username = Enc($('#alg_username').val());
+		localStorage.alg_username = Enc($('#alg_username').val());
 		alert('Foutief wachtwoord, controleer het, en probeer opnieuw om op te slaan!' );
 	}
 }
 function gotGroupsSave(xml) {
 	var found_objects = $(xml).find("GroupMembers");
 	var groups = '';
+	
 	var storedgroup = Decr(localStorage.group);
+	var selgroup = $('#select-groups').val();
+	
+	if (selgroup!=storedgroup) 
+		storedgroup=selgroup;
 	
 	$('#select-groups').empty();
 	found_objects.each(function() 
 	{
 		groupid = $(this).find('GroupID').text();
 		groupname = $(this).find('Name').text();
+		
 		var sel = '';
 		if (storedgroup=='' || storedgroup==groupid) {
 			storedgroup=groupid;
@@ -232,7 +215,6 @@ var BrowserDetect =
 
 };
 BrowserDetect.init();
-
 </script>
 <body>
 	<div  data-role="header" data-position="fixed" data-tap-toggle="false">
@@ -247,17 +229,6 @@ BrowserDetect.init();
 	<div  data-role="content">
 	
 		<div data-role="collapsible-set" data-theme="b" data-content-theme="b" data-collapsed-icon="arrow-r" data-expanded-icon="arrow-d">
-			<div data-theme="b"  data-role="collapsible" data-inset="false">
-				<h2>Controleer verbinding</h2>
-				<ul data-role="listview">
-					<li data-theme="c" data-role="list-divider">Webservice</li>
-					<li><button data-role="button" data-theme="a" onclick="testWS();" value="Test verbinding" id="Button_Test_WS"></button></li>
-					<li data-theme="c" data-role="list-divider">Account</li>
-					<li><button data-role="button" data-theme="a" onclick="testAccount();" value="Test je eigen acccount" id="Button_Test_Account"></button></li>
-					
-				</ul>
-			</div><!-- /collapsible -->	
-		
 			<div data-theme="b"  data-role="collapsible" data-inset="false">
 				<h2>Webservice instellingen</h2>
 				<ul data-role="listview">
@@ -278,12 +249,22 @@ BrowserDetect.init();
 					<li data-theme="c" data-role="list-divider">Username:</li>
 					<li><input type=text id="alg_username" /></li>
 					<li data-theme="c" data-role="list-divider">Password:</li>
-					<li><input type=password id="alg_password" /></li>
+					<li><input onblur="SetEnc()"  type=password id="alg_password" /></li>
 					<li data-theme="c" data-role="list-divider">Groep:</li>
 					<li  ><select  data-theme="c" name="select-groups" id="select-groups">
 					</select></li>
 
 					<li data-theme="c" ><button data-theme="a"  onclick=SaveAccount() value="Opslaan" id="Button_Save_2"></button></li>
+					
+					
+				</ul>
+			</div>
+			<div data-theme="b"  data-role="collapsible" data-inset="false">
+				<h2>Overigen</h2>
+				<ul data-role="listview">
+					<li data-theme="c" data-role="list-divider">Auth Methode (ios/desktop browser: -1 | Android: 0 of 1)</li>
+					<li><input type=text id="alg_authmethode" /></li>
+					<li data-theme="c" ><button data-theme="a"  onclick=SaveAlg() value="Opslaan" id="Button_Save_3"></button></li>
 					
 					
 				</ul>

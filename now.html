@@ -50,7 +50,7 @@ $(document).ready(function()
 function Validated(xml) {
 	var res = $(xml).find("string").text();
 	if (res=='True') {
-		generic_ajax('standby.asmx/GetCurrentStandbyNow',null,gotCurrentStandby);
+		generic_ajax('standby.asmx/GetCurrentStandbyNow',{iGroup:Decr(localStorage.group)},gotCurrentStandby);
 		getVersion();
 		$('#footer').html(getStatusInfo());
 		addShake();	
@@ -71,7 +71,7 @@ function getData() {
 	$('#topbar').children().addClass('bgred');
 	$('#refreshbutton').attr('src','images/ajax-loader.gif');
 	stime= new Date().getTime();
-	generic_ajax('standby.asmx/GetCallsForWeek',{Year:current_year,week:current_week},gotCalls);
+	generic_ajax('standby.asmx/GetCallsForWeek',{iGroup:Decr(localStorage.group),Year:current_year,week:current_week},gotCalls);
 }
 function gotCurrentStandby(xml) {
 	var found_objects = $(xml).find("Duty");

@@ -10,12 +10,20 @@ var hasPhoneGap = false;
 var appVersion='';
 var ajax_timeout = 5000;
 var http_method = 'GET';
-var ext_auth = true;
+var ext_auth = false;
+var alg_authmethode =  -1;
 
 // Try catch block, so this call won't result in errors (only ment for mobile/gap use!
 try { document.addEventListener("deviceready", onDeviceReady, false); }
 catch (err) {}
 
+getAuthMethod();
+function getAuthMethod() {
+		var t = localStorage.alg_authmethode;
+		if (t==null || t=='') 
+			localStorage.alg_authmethode = -1;
+		alg_authmethode = t;
+}
 
 function addShake() {
 	try {
@@ -32,10 +40,9 @@ function onDeviceReady() {
 		document.addEventListener("online", wentOnline, false);
 		document.addEventListener("offline", wentOffline, false);
 		checkConnection();
-		
 		// Added some extra auth methods to get around the Android 401 errors, but not needed for ios, so disabled here.. 
-		if (platform=='IOS' || platform=='') 
-			ext_auth = false;
+		if (platform=='IOS') 
+			ext_auth = true;
 	}
 	catch (err) {
 		alert('error on ondeviceready:' + err);
@@ -121,8 +128,6 @@ function generatePrivateKey(limit) {
     
 	return privatekey;
 }
-  
-
 function Validate(funct) {
 
 	if (Decr(localStorage.alg_username)=='' || Decr(localStorage.alg_password) =='') {
@@ -135,10 +140,10 @@ function Validate(funct) {
 	}
 	else
 	{
-		generic_ajax_sync('standby.asmx/ValidateUser',
+		generic_ajax_sync('standby.asmx/ValidateUserEnc',
 						{	strAuth:'test',
-							strUser:Decr(localStorage.alg_username),			
-							strPassword:Decr(localStorage.alg_password)
+							strUser:s_enc(Decr(localStorage.alg_username)),			
+							strPassword:s_enc(Decr(localStorage.alg_password))
 						}, 	    
 						funct);
 	}
@@ -192,10 +197,10 @@ function generic_ajax_sync(wsurl,data,funct) {
 		url:wscall,
 		type:http_method,
 		cache:false,
-		async:true,
+		async:false,
 		data:data,
-		username:Decr(localStorage.ws_username),
-		password:Decr(localStorage.ws_password),
+		username:AuthUser(localStorage.ws_username),
+		password:AuthUser(localStorage.ws_password),
 		success:funct,
 		beforeSend:extauth,
 		timeout:ajax_timeout,
@@ -220,8 +225,8 @@ function generic_ajax(wsurl,data,funct) {
 		data:data,
 		timeout:ajax_timeout,
 		beforeSend:extauth,
-		username:Decr(localStorage.ws_username),
-		password:Decr(localStorage.ws_password),
+		username:AuthUser(localStorage.ws_username),
+		password:AuthUser(localStorage.ws_password),
 		success:funct,
 		error: function (request, status, error,exception) {
 			handleError(wscall,data,request,status,error,exception);
@@ -229,14 +234,36 @@ function generic_ajax(wsurl,data,funct) {
 		dataType:'xml'
 	});
 }
+function AuthUser(strIn) {
+	if (alg_authmethode==0 || alg_authmethode==1)	
+		return '';
+	else 
+		return Decr(strIn)
+}
+function extauth(xhr) {
+	if (ext_auth || alg_authmethode==0) {
+		var un = Base64.encode( Decr(localStorage.ws_username));
+		var up = Base64.encode(Decr(localStorage.ws_password));
+		xhr.setRequestHeader('Authorization', 'Basic ' + un + ":" + up  );
+	}
+	else if (alg_authmethode==1) {
+		xhr.setRequestHeader("Authorization", "Basic " + Base64.encode(Decr(localStorage.ws_username) + ":"  + Decr(localStorage.ws_password) ));
+	}
+	
+	
+}
 function handleError(wscall,data,request, status, error,exception) {
 	alert('De webservice kon niet worden aangeroepen.\nControleer je verbinding, en/of de gebruikernaam en wachtwoord, en probeer opnieuw\n' +
 			  'url:' + wscall + '\n'+ 
 			  'data:' + data + '\n'+ 
 			  'platform:' + platform + '\n'+ 
 			  'ext auth:' + ext_auth + '\n'+ 
+			  'auth method:' + alg_authmethode  + '\n'+ 
 			  'status:' + request.status + '\n'+ 
 			  'exception:' + exception);
+	
+	if ( window.location.href.indexOf("settings.html") == -1 )
+		location='settings.html';
 		
 
 }
@@ -255,6 +282,9 @@ function getVersion() {
 			cache:false,
 			async:true,
 			beforeSend:extauth,
+			username:AuthUser(localStorage.ws_username),
+			password:AuthUser(localStorage.ws_password),
+			
 			timeout:ajax_timeout,
 			success:gotVersion,
 			error: function (request, status, error,exception) {
@@ -270,13 +300,7 @@ function gotVersion(xml) {
 	
 	$('#footer').html(getStatusInfo());
 }
-function extauth(xhr) {
-	if (ext_auth) {
-		var un = Base64.encode( Decr(localStorage.ws_username));
-		var up = Base64.encode(Decr(localStorage.ws_password));
-		xhr.setRequestHeader('Authorization', 'Basic ' + un + ":" + up  );
-	}
-}
+
 
 var Base64 = {
 
@@ -409,4 +433,24 @@ var Base64 = {
         }
         return string;
     }
+}
+function getString(l)
+{
+    var text = "";
+    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!@#$%^&*()_+=-{}[]:;<>?,./";
+    for( var i=0; i < l; i++ )
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+    return text;
+}
+function s_enc(pwin) {
+	var oudpwd = pwin;
+	var pwout = '';
+	var t = '';
+	for (var i = 0;i<oudpwd.length;i++) {
+		var cur_char = oudpwd.charAt(i);
+		var cur_code = oudpwd.charCodeAt(i);
+		pwout = pwout + (cur_code-40) + getString(1)
+	}
+	pwout = getString(6) + pwout + getString(5);
+	return pwout;
 }

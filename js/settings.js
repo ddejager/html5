@@ -258,15 +258,17 @@ function extauth(xhr) {
 	
 }
 function handleError(wscall,data,request, status, error,exception) {
-	alert('De webservice kon niet worden aangeroepen.\nControleer je verbinding, en/of de gebruikernaam en wachtwoord, en probeer opnieuw\n' +
-			  'url:' + wscall + '\n'+ 
-			  'data:' + data + '\n'+ 
-			  'platform:' + platform + '\n'+ 
-			  'ext auth:' + ext_auth + '\n'+ 
-			  'auth method:' + alg_authmethode  + '\n'+ 
-			  'status:' + request.status + '\n'+ 
-			  'exception:' + exception);
-	
+
+	if (localStorage.showerrors=='true' || window.location.href.indexOf("settings.html") >-1 ) {
+		alert('De webservice kon niet worden aangeroepen.\nControleer je verbinding, en/of de gebruikernaam en wachtwoord, en probeer opnieuw\n' +
+				  'url:' + wscall + '\n'+ 
+				  'data:' + data + '\n'+ 
+				  'platform:' + platform + '\n'+ 
+				  'ext auth:' + ext_auth + '\n'+ 
+				  'auth method:' + alg_authmethode  + '\n'+ 
+				  'status:' + request.status + '\n'+ 
+				  'exception:' + exception);
+	}
 	if ( window.location.href.indexOf("settings.html") == -1 )
 		location='settings.html';
 		
@@ -289,7 +291,6 @@ function getVersion() {
 			beforeSend:extauth,
 			username:AuthUser(localStorage.ws_username),
 			password:AuthUser(localStorage.ws_password),
-			
 			timeout:ajax_timeout,
 			success:gotVersion,
 			error: function (request, status, error,exception) {

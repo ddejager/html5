@@ -34,10 +34,7 @@ $(document).ready(function()
 	{
 		generic_ajax_sync('standby.asmx/GetGroupByMember',{logon:$('#alg_username').val(),memid:''},gotGroups); 
 		getVersion();
-		
-		
 	}
-	
 });
 function Load() {
 	LoadAlg();
@@ -47,8 +44,12 @@ function Load() {
 	$('#ws_apikey').val(Decr(localStorage.ws_apikey));
 	$('#alg_username').val(Decr(localStorage.alg_username));
 	$('#alg_password').val(Decr(localStorage.alg_password));
+	generic_ajax_sync('standby.asmx/GetMember',{iMember_id:'',iMember_logon:$('#alg_username').val()},gotMember); 
 	
-	
+	if (localStorage.showerrors) {
+		$('#alg_showerrors').attr('checked','true');
+		$('#alg_showerrors').checkboxradio('refresh');
+	}
 }
 function SaveWS() {
 	localStorage.ws_url= Enc($('#ws_url').val());
@@ -68,9 +69,11 @@ function LoadAlg() {
 		if (t==null || t=='') 
 			localStorage.alg_authmethode = -1;
 		$('#alg_authmethode').val(localStorage.alg_authmethode);
+		
 }
 function SaveAlg() {
 	localStorage.alg_authmethode = $('#alg_authmethode').val();
+	localStorage.group = Enc($('#alg_groupid').val());
 }
 function SaveAccount() {
 	if ( Decr(localStorage.ws_username)=='' || Decr(localStorage.ws_password)=='' || Decr(localStorage.ws_apikey=='') ) 
@@ -95,19 +98,29 @@ function gotAD(xml) {
 	$('#refreshbutton').attr('src','images/Refresh.png');
 	if ($(xml).find("string").text()=='True') {
 		generic_ajax_sync('standby.asmx/GetGroupByMember',{logon:$('#alg_username').val(),memid:''},gotGroupsSave); 
+		generic_ajax_sync('standby.asmx/GetMember',{iMember_id:'',iMember_logon:$('#alg_username').val()},gotMember); 
 	}
 	else {
 		localStorage.alg_username = Enc($('#alg_username').val());
 		alert('Foutief wachtwoord, controleer het, en probeer opnieuw om op te slaan!' );
 	}
 }
+function gotMember(xml) {
+	var found_objects = $(xml).find("Members");
+	found_objects.each(function() 
+	{
+		var homephone = $(this).find('HomePhone').text();
+		var cellphone = $(this).find('CellPhone').text();
+		$('#alg_phone').val(homephone);
+		$('#alg_mobile').val(cellphone);
+	});
+}
+
 function gotGroupsSave(xml) {
 	var found_objects = $(xml).find("GroupMembers");
 	var groups = '';
-	
 	var storedgroup = Decr(localStorage.group);
 	var selgroup = $('#select-groups').val();
-	
 	if (selgroup!=storedgroup) 
 		storedgroup=selgroup;
 	
@@ -133,16 +146,34 @@ function gotGroupsSave(xml) {
 		localStorage.alg_password = Enc($('#alg_password').val());
 		localStorage.group=Enc($('#select-groups option:selected').val());
 		localStorage.groupname=Enc($('#select-groups option:selected').text());
-		alert('Account is opgeslagen!');
+		if  ( $('#alg_phone').val()!='' && $('#alg_mobile').val()!='') {
+			generic_ajax_sync('standby.asmx/SetMemberDetail',
+			{	iMember_id:$('#alg_username').val(),
+					HomePhone:$('#alg_phone').val(),
+					CellPhone:$('#alg_mobile').val(),
+					SortOrder:'',Active:''
+			},
+			MemberDetailSaved);
+		}
+		else 
+		{
+			alert('Account is opgeslagen!');
+		}
 	}
 	else {
 		alert('Uw gebruikernaam en wachtwoord zijn goed, maar u bent niet bekend in het standby systeem!');
 	}
 }
+function MemberDetailSaved(xml) {
+		alert('Account is opgeslagen!');
+
+}
 function gotGroups(xml) {
 	var found_objects = $(xml).find("GroupMembers");
 	var groups = '';
 	var storedgroup = Decr(localStorage.group);
+	$('#alg_groupid').val(storedgroup);
+	
 	$('#select-groups').empty();
 	found_objects.each(function() 
 	{
@@ -161,6 +192,18 @@ function gotGroups(xml) {
 	$('#select-groups').selectmenu("refresh");
 	
 }
+function ChangeErrorHandling() {
+	alert($('#alg_showerrors:checked').val());
+	
+	if ($('#alg_showerrors:checked').val()=='true') {
+		localStorage.showerrors=true;
+	}
+	else {
+		localStorage.showerrors=false;
+	}
+}
+				
+
 function Reset() {
 	localStorage.clear();  			// empty store 
 	initKey();
@@ -215,6 +258,7 @@ var BrowserDetect =
 
 };
 BrowserDetect.init();
+
 </script>
 <body>
 	<div  data-role="header" data-position="fixed" data-tap-toggle="false">
@@ -238,8 +282,6 @@ BrowserDetect.init();
 					<li><input type=text id="ws_username" /></li>
 					<li data-theme="c" data-role="list-divider">Password (voor webservice):</li>
 					<li><input type=password id="ws_password" /></li>
-					<li data-theme="c" data-role="list-divider">API Key(voor webservice):</li>
-					<li><input type=text id="ws_apikey" /></li>
 					<li data-theme="c" ><button data-theme="a"  onclick=SaveWS() value="Opslaan" id="Button_Save_1"></button></li>
 				</ul>
 			</div><!-- /collapsible -->	
@@ -251,9 +293,13 @@ BrowserDetect.init();
 					<li data-theme="c" data-role="list-divider">Password:</li>
 					<li><input onblur="SetEnc()"  type=password id="alg_password" /></li>
 					<li data-theme="c" data-role="list-divider">Groep:</li>
-					<li  ><select  data-theme="c" name="select-groups" id="select-groups">
-					</select></li>
-
+					<li  ><select  data-theme="c" name="select-groups" id="select-groups"></select></li>
+					<li data-theme="c" data-role="list-divider">Telefoon:</li>
+					<li><input type=text id="alg_phone" /></li>
+					<li data-theme="c" data-role="list-divider">Mobiel:</li>
+					<li><input type=text id="alg_mobile" /></li>
+					
+					
 					<li data-theme="c" ><button data-theme="a"  onclick=SaveAccount() value="Opslaan" id="Button_Save_2"></button></li>
 					
 					
@@ -264,9 +310,15 @@ BrowserDetect.init();
 				<ul data-role="listview">
 					<li data-theme="c" data-role="list-divider">Auth Methode (ios/desktop browser: -1 | Android: 0 of 1)</li>
 					<li><input type=text id="alg_authmethode" /></li>
+					<li data-theme="c" data-role="list-divider">Alternate group setting</li>
+					<li><input type=text id="alg_groupid" /></li>
+					<li data-theme="c" data-role="list-divider">Error handling</li>
+					
+					<li><input onclick=ChangeErrorHandling() id="alg_showerrors"  type=checkbox id="alg_showerrors" /></li>
+					<label for="alg_showerrors">Show errors</label>
+
+					
 					<li data-theme="c" ><button data-theme="a"  onclick=SaveAlg() value="Opslaan" id="Button_Save_3"></button></li>
-					
-					
 				</ul>
 			</div>
 

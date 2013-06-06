@@ -47,13 +47,34 @@ $(document).ready(function()
 	
 });
 
+function getGroups() {
+	generic_ajax('standby.asmx/GetGroups',{onlymain:true},gotGroups);
+}
+function gotGroups(xml) {
+	var found_objects = $(xml).find("Group");
+	found_objects.each(function() 
+	{
+		var groupid = $(this).find('id').text();
+		var groupname = $(this).find('Name').text();
+		
+		var newbutton = '<li>'  + 
+						'<a href="#"  onclick="AssignTo('  + groupid + ');" >Toewijzen aan '  + groupname + '</a>' + 
+						'</li>';
+		$('#OtherGroups').append(newbutton);
+	});
+	$('#OtherGroups').listview('refresh');
+
+}
+
 function Validated(xml) {
 	var res = $(xml).find("string").text();
 	if (res=='True') {
 		generic_ajax('standby.asmx/GetCurrentStandbyNow',{iGroup:Decr(localStorage.group)},gotCurrentStandby);
 		getVersion();
+		getGroups();
 		$('#footer').html(getStatusInfo());
 		addShake();	
+		
 		
 	}
 	else {
@@ -112,6 +133,7 @@ function gotCalls(xml) {
 				count++;
 				
 				var id = $(this).find('id').text();
+				var groupid=$(this).find('Group_id').text();
 				var reason = $(this).find('Call_Reason').text();
 				var remarks = $(this).find('Call_Remarks').text();
 				var ctime =  $(this).find('Call_Time').text();
@@ -142,7 +164,7 @@ function gotCalls(xml) {
 				if (remarks!='') {
 					reason = reason + '<br><i>'  + remarks + '</i>';
 				}
-				var ni = $('#call_list').append('<li data-phone="' + pcaller + '" data-callog="' + callog + '" onclick=Click(this,' + id + ');><a href="#">' + 
+				var ni = $('#call_list').append('<li data-phone="' + pcaller + '" data-callog="' + callog + '" onclick=Click(this,' + id + ',' + groupid + ');><a href="#">' + 
 										'<img src="images/'  + cstatus + '" alt="new" class="ui-li-count" />' +
 										id + ' ' + dateFormat(D,"dd/mm HH:MM") + 
 										' ' + dname + 
@@ -165,10 +187,12 @@ $(document).ajaxError(function(event, request, settings) {
 });
 */
 
-function Click(obj,id) {
+function Click(obj,id,gid) {
 	$(obj).children().addClass('bgorange');
 	selected_object = obj;
 	$('#Call_ID').val(id);
+	$('#Group_ID').val(gid);
+
 	$('#callid').html('Change call ' + id);
 	var phonenumber = $(selected_object).attr("data-phone") ;
 	if (phonenumber.length==4) 
@@ -224,6 +248,19 @@ function popLog() {
 	cl = cl.replace(/(\r\n|\n|\r)/gm,"<br>");	
 	$('#calllog').html(cl);
 }
+function AssignTo(groupid) {
+	var cid = $('#Call_ID').val();
+	var gid = $('#Group_ID').val();
+	
+	if (groupid==gid) 
+		alert('Deze melding is al in deze groep gedaan!');
+	else 
+		generic_ajax('standby.asmx/ReAssignCall',{FromGroup:gid,ToGroup:groupid,Call_ID:cid},Assigned);
+}
+function Assigned(xml) {
+	alert('Call is overgezet naar andere groep!');
+	location=location;
+}
 
 </script>
 <body>
@@ -266,7 +303,12 @@ function popLog() {
 				<li><a id="telnr" href="tel:000">Klik hier</a></li>
 			</ul>
 		</div><!-- /collapsible -->	
-		
+		<div data-role="collapsible" data-inset="false">
+			<h2>Voor andere groep</h2>
+			<ul id="OtherGroups"  data-role="listview">
+			</ul>
+		</div><!-- /collapsible -->	
+
 		<div data-role="collapsible" data-inset="false">
 			<h2>Overigen</h2>
 			<ul data-role="listview">
@@ -291,6 +333,7 @@ function popLog() {
 </div>
 	
 <input type=hidden value="12" size=3 id="Call_ID"> 
+<input type=hidden value="" size=3 id="Group_ID"> 
 
 
 </body>

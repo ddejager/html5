@@ -1,6 +1,5 @@
 var wsbase;
 var netstaticon = '';
-var netstatdesc = '';
 var enckey = '';
 var platform ='';
 var devicename = 'PC';
@@ -37,9 +36,6 @@ function onDeviceReady() {
 		platform = device.platform;
 		devicename = device.name; 
 		devicemodel = device.model;
-		document.addEventListener("online", wentOnline, false);
-		document.addEventListener("offline", wentOffline, false);
-		checkConnection();
 		// Added some extra auth methods to get around the Android 401 errors, but not needed for ios, so disabled here.. 
 		if (platform=='IOS') 
 			ext_auth = true;
@@ -47,61 +43,6 @@ function onDeviceReady() {
 	catch (err) {
 		alert('error on ondeviceready:' + err);
 	}
-}
-function wentOffline() {
-	isonline = false;
-	checkConnection();
-
-}
-function wentOnline() {
-	isonline = true;
-	checkConnection();
-}
-function checkConnection() {
-		try {
-			var networkState = navigator.connection.type;
-			var states = {};
-			states[Connection.UNKNOWN]  = 'Unknown connection';
-			states[Connection.ETHERNET] = 'Ethernet connection';
-			states[Connection.WIFI]     = 'WiFi connection';
-			states[Connection.CELL_2G]  = 'Cell 2G connection';
-			states[Connection.CELL_3G]  = 'Cell 3G connection';
-			states[Connection.CELL_4G]  = 'Cell 4G connection';
-			states[Connection.CELL]     = 'Cell generic connection';
-			states[Connection.NONE]     = 'No network connection';
-			
-			// ios only returns _2G or CELL in the future
-			if (platform=='iOs') {
-				states[Connection.CELL_2G]  = 'Cell connection';
-				states[Connection.CELL_3G]  = 'Cell connection';
-				states[Connection.CELL_4G]  = 'Cell connection';
-				states[Connection.CELL]     = 'Cell connection';
-			}	
-			netstatdesc = states[networkState];
-			states[Connection.UNKNOWN]  = 'gap/net/NONE.PNG';
-			states[Connection.ETHERNET] = 'gap/net/WIFI.PNG';
-			states[Connection.WIFI]     = 'gap/net/WIFI.png';
-			states[Connection.CELL_2G]  = 'gap/net/2G.png';
-			states[Connection.CELL_3G]  = 'gap/net/3G.png';
-			states[Connection.CELL_4G]  = 'gap/net/3G.png';
-			states[Connection.CELL]     = 'gap/net/2G.png';
-			states[Connection.NONE]     = 'gap/net/0BARS.png';
-			
-			// ios only returns _2G or CELL in the future
-			if (platform=='iOs') { 
-				states[Connection.CELL_2G]  = 'gap/net/3G.png';
-				states[Connection.CELL_3G]  = 'gap/net/3G.png';
-				states[Connection.CELL_4G]  = 'gap/net/3G.png';
-				states[Connection.CELL]     = 'gap/net/3G.png';
-			}
-			netstaticon = states[networkState];
-			$('#netstatus').attr('src',states[networkState]);
-		}
-		catch (err) {
-			netstatdesc = 'NOT AVAILABLE';
-			netstaticon='';
-		}
-
 }
 function initKey() {
 	if (!localStorage.enckey) {
@@ -286,23 +227,20 @@ function getVersion() {
 
 	try {
 		$.ajax( {	
-			url:'version.xml',
-			type:http_method,
+			url:'config.xml',
+			type:'GET',
 			cache:false,
 			async:true,
-			beforeSend:extauth,
-			username:AuthUser(localStorage.ws_username),
-			password:AuthUser(localStorage.ws_password),
-			timeout:ajax_timeout,
 			success:gotVersion,
 			error: function (request, status, error,exception) {
-				handleError('version.xml','',request,status,error,exception);
+				handleError('config.xml','',request,status,error,exception);
 			},
 			dataType:'xml'
 		});
 	}
 	catch(err) {}
 }
+
 function gotVersion(xml) {
 	appVersion = $(xml).find('widget').attr('version');
 	

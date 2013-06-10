@@ -3,7 +3,7 @@
         xmlns:gap = "http://phonegap.com/ns/1.0"
         id        = "com.odfjell.otrstandby"
         versionCode="10" 
-        version   = "0.3.1">
+        version   = "0.3.2">
     <name>OTR Standby</name>
     <description>
         App for handling incidents while we are on callout duty.

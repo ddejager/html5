@@ -268,9 +268,11 @@ function handleError(wscall,data,request, status, error,exception) {
 				  'auth method:' + alg_authmethode  + '\n'+ 
 				  'status:' + request.status + '\n'+ 
 				  'exception:' + exception);
+		
+		if ( window.location.href.indexOf("settings.html") == -1 )
+			location='settings.html';
+
 	}
-	if ( window.location.href.indexOf("settings.html") == -1 )
-		location='settings.html';
 		
 
 }
@@ -284,7 +286,7 @@ function getVersion() {
 
 	try {
 		$.ajax( {	
-			url:'config.xml',
+			url:'version.xml',
 			type:http_method,
 			cache:false,
 			async:true,
@@ -294,7 +296,7 @@ function getVersion() {
 			timeout:ajax_timeout,
 			success:gotVersion,
 			error: function (request, status, error,exception) {
-				handleError('config.xml','',request,status,error,exception);
+				handleError('version.xml','',request,status,error,exception);
 			},
 			dataType:'xml'
 		});

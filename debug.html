@@ -55,8 +55,6 @@ function getAll() {
 	getLayout();
 	getLogonInfo();
 	if (hasPhoneGap) {
-		checkConnection();
-		getNetworkInfo();
 		getPhoneGap();
 	}
 	getLocalStorage();
@@ -81,19 +79,6 @@ function getPhoneGap() {
 	ht = ht + '<tr><td class="colsheader" colspan="2">End of Device info</td></tr>\n';
 	ht = ht + '</table>\n';
 	$('#content').append(ht);
-}
-function getNetworkInfo() {
-	var ht = '';
-	ht = ht + '<table>\n';
-	ht = ht + '<tr>\n';
-	ht = ht + '<td class="colsheader" colspan="2">Network Info</td>\n';
-	ht = ht + '</tr>\n';
-	ht = ht + '<tr><td class="colheader">Network status</td><td class="cell_s">' + netstatdesc + '</td></tr>\n' ;
-	ht = ht + '<tr><td class="colheader">Type network</td><td class="cell_s"><img src="' + netstaticon + '"></td></tr>\n' ;
-	ht = ht + '<tr><td class="colsheader" colspan="2">End of Client info</td></tr>\n';
-	ht = ht + '</table>\n';
-	$('#content').append(ht);
-
 }
 function getLocalStorage() 
 {	
@@ -274,17 +259,16 @@ function Clear() {
 }
 </script>
 <body>
-	
-<div  data-role="header" data-position="fixed" data-tap-toggle="false">
-	<div>
-		<h1 id="topbar" class='ui-title' data-divider-="e" role='heading' aria-level='1'>
-		<div id="header2">DEBUG INFO</div>
-		<a href="#" onclick="goBack();"  class="ui-btn-left"  data-role="button" data-icon="back" data-iconpos="notext" data-theme="a" data-inline="true" ></a>
-		<a href="#" onclick="getAll();"><img height=32px id="refreshbutton" src="images/Refresh.png" class="ui-btn-right" ></a></h1>
-		
+<header data-role ="header" data-theme="a" > 
+<h1 class="ui-title" role="heading"><div id="header2">DEBUG</div></h1>
+  <div class="ui-btn-left" data-role="controlgroup" data-type="horizontal">
+	 <input type="button" onclick="goBack();"  data-role="button" data-icon="home" data-iconpos="notext" data-theme="a" data-inline="true" / > 
+    </div>
+    <div class="ui-btn-right" data-role="controlgroup" data-type="horizontal">
+      <button onclick="getAll();" data-icon="refresh" data-inline="true" data-theme="a" data-role="button" data-iconpos="notext"/>
+    </div>
+</header>
 
-	</div>
-</div>
 <div id="content" data-role="content" data-scrollz="pull">
 </div>
 

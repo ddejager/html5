@@ -261,83 +261,80 @@ BrowserDetect.init();
 
 </script>
 <body>
-	<div  data-role="header" data-position="fixed" data-tap-toggle="false">
-		<div>
-			<h1 id="topbar" class='ui-title' data-divider-="a" role='heading' aria-level='1'>
-			<div id="header2">Instellingen</div>
-			<a href="#" onclick="goBack();"  class="ui-btn-left"  data-role="button" data-icon="home" data-iconpos="notext" data-theme="a" data-inline="true" ></a>
-			<a href="#" onclick="getAll();"><img height=32px id="refreshbutton" src="images/Refresh.png" class="ui-btn-right" ></a></h1>
-		</div>
-	</div>
+<header data-role ="header" data-theme="a"  data-position="fixed"> 
+<h1 class="ui-title" role="heading"><div id="header2">Instellingen</div></h1>
+  <div class="ui-btn-left" data-role="controlgroup" data-type="horizontal">
+	 <input type="button" onclick="goBack();"  data-role="button" data-icon="home" data-iconpos="notext" data-theme="a" data-inline="true" / > 
+    </div>
+    <div class="ui-btn-right" data-role="controlgroup" data-type="horizontal">
+      <button onclick="getAll();" data-icon="refresh" data-inline="true" data-theme="a" data-role="button" data-iconpos="notext"/>
+    </div>
+</header>
 	
-	<div  data-role="content">
-	
-		<div data-role="collapsible-set" data-theme="b" data-content-theme="b" data-collapsed-icon="arrow-r" data-expanded-icon="arrow-d">
-			<div data-theme="b"  data-role="collapsible" data-inset="false">
-				<h2>Webservice instellingen</h2>
-				<ul data-role="listview">
-					<li data-theme="c" data-role="list-divider">Base URL:</li>
-					<li><input type=text id="ws_url" /></li>
-					<li data-theme="c" data-role="list-divider">Username (voor webservice):</li>
-					<li><input type=text id="ws_username" /></li>
-					<li data-theme="c" data-role="list-divider">Password (voor webservice):</li>
-					<li><input type=password id="ws_password" /></li>
-					<li data-theme="c" ><button data-theme="a"  onclick=SaveWS() value="Opslaan" id="Button_Save_1"></button></li>
-				</ul>
-			</div><!-- /collapsible -->	
-			<div data-theme="b"  data-role="collapsible" data-inset="false">
-				<h2>Eigen account</h2>
-				<ul data-role="listview">
-					<li data-theme="c" data-role="list-divider">Username:</li>
-					<li><input type=text id="alg_username" /></li>
-					<li data-theme="c" data-role="list-divider">Password:</li>
-					<li><input onblur="SetEnc()"  type=password id="alg_password" /></li>
-					<li data-theme="c" data-role="list-divider">Groep:</li>
-					<li  ><select  data-theme="c" name="select-groups" id="select-groups"></select></li>
-					<li data-theme="c" data-role="list-divider">Telefoon:</li>
-					<li><input type=text id="alg_phone" /></li>
-					<li data-theme="c" data-role="list-divider">Mobiel:</li>
-					<li><input type=text id="alg_mobile" /></li>
-					
-					
-					<li data-theme="c" ><button data-theme="a"  onclick=SaveAccount() value="Opslaan" id="Button_Save_2"></button></li>
-					
-					
-				</ul>
-			</div>
-			<div data-theme="b"  data-role="collapsible" data-inset="false">
-				<h2>Overigen</h2>
-				<ul data-role="listview">
-					<li data-theme="c" data-role="list-divider">Auth Methode (ios/desktop browser: -1 | Android: 0 of 1)</li>
-					<li><input type=text id="alg_authmethode" /></li>
-					<li data-theme="c" data-role="list-divider">Alternate group setting</li>
-					<li><input type=text id="alg_groupid" /></li>
-					<li data-theme="c" data-role="list-divider">Error handling</li>
-					
-					<li><input onclick=ChangeErrorHandling() id="alg_showerrors"  type=checkbox id="alg_showerrors" /></li>
-					<label for="alg_showerrors">Show errors</label>
+<div  data-role="content">
 
-					
-					<li data-theme="c" ><button data-theme="a"  onclick=SaveAlg() value="Opslaan" id="Button_Save_3"></button></li>
-				</ul>
-			</div>
-
-			<div data-theme="b"  data-role="collapsible" data-inset="false">
-				<h2>Reset naar default</h2>
-				<button data-role="button" data-theme="a" onclick=Reset() value="Klik om te resetten" id="Button_Save"></button>
+	<div data-role="collapsible-set" data-theme="b" data-content-theme="b" data-collapsed-icon="arrow-r" data-expanded-icon="arrow-d">
+		<div data-theme="b"  data-role="collapsible" data-inset="false">
+			<h2>Webservice instellingen</h2>
+			<ul data-role="listview">
+				<li data-theme="c" data-role="list-divider">Base URL:</li>
+				<li><input type=text id="ws_url" /></li>
+				<li data-theme="c" data-role="list-divider">Username (voor webservice):</li>
+				<li><input type=text id="ws_username" /></li>
+				<li data-theme="c" data-role="list-divider">Password (voor webservice):</li>
+				<li><input type=password id="ws_password" /></li>
+				<li data-theme="c" ><button data-theme="a"  onclick=SaveWS() value="Opslaan" id="Button_Save_1"></button></li>
+			</ul>
+		</div><!-- /collapsible -->	
+		<div data-theme="b"  data-role="collapsible" data-inset="false">
+			<h2>Eigen account</h2>
+			<ul data-role="listview">
+				<li data-theme="c" data-role="list-divider">Username:</li>
+				<li><input type=text id="alg_username" /></li>
+				<li data-theme="c" data-role="list-divider">Password:</li>
+				<li><input onblur="SetEnc()"  type=password id="alg_password" /></li>
+				<li data-theme="c" data-role="list-divider">Groep:</li>
+				<li  ><select  data-theme="c" name="select-groups" id="select-groups"></select></li>
+				<li data-theme="c" data-role="list-divider">Telefoon:</li>
+				<li><input type=text id="alg_phone" /></li>
+				<li data-theme="c" data-role="list-divider">Mobiel:</li>
+				<li><input type=text id="alg_mobile" /></li>
 				
-			</div><!-- /collapsible -->	
-		
+				
+				<li data-theme="c" ><button data-theme="a"  onclick=SaveAccount() value="Opslaan" id="Button_Save_2"></button></li>
+				
+				
+			</ul>
 		</div>
-		
-		
-		
+		<div data-theme="b"  data-role="collapsible" data-inset="false">
+			<h2>Overigen</h2>
+			<ul data-role="listview">
+				<li data-theme="c" data-role="list-divider">Auth Methode (ios/desktop browser: -1 | Android: 0 of 1)</li>
+				<li><input type=text id="alg_authmethode" /></li>
+				<li data-theme="c" data-role="list-divider">Alternate group setting</li>
+				<li><input type=text id="alg_groupid" /></li>
+				<li data-theme="c" data-role="list-divider">Error handling</li>
+				
+				<li><input onclick=ChangeErrorHandling() id="alg_showerrors"  type=checkbox id="alg_showerrors" /></li>
+				<label for="alg_showerrors">Show errors</label>
 
+				
+				<li data-theme="c" ><button data-theme="a"  onclick=SaveAlg() value="Opslaan" id="Button_Save_3"></button></li>
+			</ul>
+		</div>
+		<div data-theme="b"  data-role="collapsible" data-inset="false">
+			<h2>Reset naar default</h2>
+			<button data-role="button" data-theme="a" onclick=Reset() value="Klik om te resetten" id="Button_Save"></button>
+			
+		</div><!-- /collapsible -->	
 	</div>
+</div>
+<div  data-theme="a" data-role="content" data-position="fixed" data-tap-toggle="false">
+	<div id="bottombar" calss="ui-title" data-theme="a" role="heading"></div>
+		<footer style="font-size:14px;font-weight:normal;" id="footer" data-role="footer" data-theme="a"></footer>
+	</div>
+</div>
 	
-	<div id="footer" data-role="content" data-scrollz="pull">
-
-	</div>
 
 
 </body>

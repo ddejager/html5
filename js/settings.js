@@ -2,7 +2,7 @@ var wsbase;
 var netstaticon = '';
 var enckey = '';
 var platform ='';
-var devicename = 'PC';
+var devicename = '---';
 var devicemodel = '';
 var isonline = true;
 var hasPhoneGap = false;

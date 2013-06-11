@@ -60,7 +60,6 @@ function shakeEventDidOccur ()
 {
 	generic_ajax('standby.asmx/GetCurrentStandbyNow',{iGroup:Decr(localStorage.group)},gotCurrentStandby);
 	$('#footer').html(getStatusInfo());
-	checkConnection();
 }
 function gotCurrentStandby(xml) {
 	var found_objects = $(xml).find("Duty");
@@ -100,14 +99,10 @@ function doLayout() {
 </script>
 </HEAD>
 <body>
-<div  data-theme="a" data-role="header" data-position="fixed" data-tap-toggle="false">
-		<h1 id="topbar" data-theme="a" data-role='content' aria-level='1'>
-			<div id="header2">Mobile Standby</div>
-			<img id="netstatus" src="gap/net/inv.gif" class="ui-btn-right">
-			<img height=32px id="refreshbutton" src="" class="ui-btn-right">
-		</h1>
-	</div>
-</div>
+<header data-role ="header" data-theme="a"  data-position="fixed"> 
+<h1 class="ui-title" role="heading"><div id="header2">Mobile Standby</div></h1>
+</header>
+
 <div id="menu" data-role="content" data-theme="b">
 	<div id="spacer">&nbsp;</div>
 	<div class="logo_image"><img class="logo_image" width="300px" src="images/tank.png"  alt="Image Header" ></div>
@@ -118,9 +113,9 @@ function doLayout() {
 	<a data-icon="grid" data-role="button" onclick="load('debug.html');" href="#" >Debug info</a>
 </div>
 <div  data-theme="a" data-role="content" data-position="fixed" data-tap-toggle="false">
-<div id="footer">--</div>
-</div>
 
+<footer style="font-size:14px;font-weight:normal;" id="footer" data-role="footer" data-theme="a"></footer>
+</div>
 
 </body>
 </html>

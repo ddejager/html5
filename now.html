@@ -87,6 +87,9 @@ function shakeEventDidOccur () {
 		getData();
 		getCurrentStandby();
 }
+function getCurrentStandby() {
+	generic_ajax('standby.asmx/GetCurrentStandbyNow',{iGroup:Decr(localStorage.group)},gotCurrentStandby);
+}
 
 function getData() {
 	$('#topbar').children().addClass('bgred');
@@ -264,16 +267,19 @@ function Assigned(xml) {
 
 </script>
 <body>
-<!-- Content -->
-<div id="content" data-role="content" data-scrollz="pull">
-<div  data-role="header" data-position="fixed" data-tap-toggle="false">
-	<div>
-		<h1 id="topbar" class='ui-title' data-divider-="e" role='heading' aria-level='1'><div id="header2"></div>
-		<a href="#" onclick="goBack();"  class="ui-btn-left"  data-role="button" data-icon="back" data-iconpos="notext" data-theme="a" data-inline="true" ></a>
-		<a href="#" onclick="getData();getCurrentStandby();"><img height=32px id="refreshbutton" src="images/Refresh.png" class="ui-btn-right" ></a>
-		</h1>
-	</div>
-</div>
+<header data-role ="header" data-theme="a"  data-position="fixed"> 
+<h1 class="ui-title" role="heading"><div id="header2"></h1>
+  <div class="ui-btn-left" data-role="controlgroup" data-type="horizontal">
+	 <input type="button" onclick="goBack();"  data-role="button" data-icon="back" data-iconpos="notext" data-theme="a" data-inline="true" / > 
+    </div>
+    <div class="ui-btn-right" data-role="controlgroup" data-type="horizontal">
+      <button onclick="getData();getCurrentStandby();" data-icon="refresh" data-inline="true" data-theme="a" data-role="button" data-iconpos="notext"/>
+    </div>
+</header>
+
+
+
+
 <div id="spacer"></div>
 <ul id="call_list" data-role="listview">
 </ul>
@@ -322,7 +328,7 @@ function Assigned(xml) {
 </div>
 <div  data-theme="a" data-role="content" data-position="fixed" data-tap-toggle="false">
 <div id="bottombar" calss="ui-title" data-theme="a" role="heading"></div>
-<div id="footer">--</div>
+<footer style="font-size:14px;font-weight:normal;" id="footer" data-role="footer" data-theme="a"></footer>
 </div>
 <div id="popuplog" data-role="popup">
 	<a onclick=closeMenu() href="#" data-rel="back" data-role="button" data-theme="a" data-icon="delete" data-iconpos="notext" class="ui-btn-right">Close</a>

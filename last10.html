@@ -38,7 +38,7 @@ $(document).ready(function()
 	sh = $(this).height();
 	sw = $(this).width();
 	Validate(Validated);
-	$('#SwitchButton').text( Decr(localStorage.groupname));
+
 	$( "#popupdiv" ).bind({
 		popupafterclose: function(event, ui) 
 		{
@@ -96,6 +96,12 @@ function gotGroups(xml) {
 		groups[tel] = {gid:groupid,gname:groupname};
 		tel++;
 	});
+	var gn = groups[switchdata].gname;
+	$('#SwitchButton').val( gn).button('refresh');
+	
+
+	
+	
 }
 function getDataSwitch() {
 	switchdata++;
@@ -104,12 +110,12 @@ function getDataSwitch() {
 		switchdata = -1;
 	if (switchdata==-1)  {
 		getDataAll();
-		$('#SwitchButton').text('Alles');
+		$('#SwitchButton').val('Alles').button('refresh');
 	}
 	else {
 		var curgroup= groups[switchdata];
 		getData2(curgroup.gid);
-		$('#SwitchButton').text(curgroup.gname);
+		$('#SwitchButton').val(curgroup.gname).button('refresh');
 	}
 }
 
@@ -303,19 +309,16 @@ function Assigned(xml) {
 
 </script>
 <body>
-<div  data-role="header" data-position="fixed" data-tap-toggle="false">
-	<div>
-		<h1 id="topbar" class='ui-title' role='heading' aria-level='1'><div id="pagetitle">Laatste 10 standby Calls</div>
-		<a id="SwitchButton" style="left:50px;height:25px;width:75px;" class="ui-btn-left" data-role="button" href="#" onclick="getDataSwitch();"></a>
-		<a href="#" onclick="goBack();"  class="ui-btn-left"  data-role="button" data-icon="back" data-iconpos="notext" data-theme="a" data-inline="true" ></a>
-		<a href="#" onclick="getData();getCurrentStandby();"><img height=32px id="refreshbutton" src="images/Refresh.png" class="ui-btn-right" ></a>
-		
-		</h1>
-	</div>
-	
-	
-</div>
-<!-- Content -->
+<header data-role ="header" data-theme="a"  data-position="fixed"> 
+<h1 class="ui-title" role="heading"><div id="pagetitle">Laatste 10 standby Calls</div></h1>
+  <div class="ui-btn-left" data-role="controlgroup" data-type="horizontal">
+	 <input type="button" onclick="goBack();"  data-role="button" data-icon="back" data-iconpos="notext" data-theme="a" data-inline="true" / > 
+     <input id="SwitchButton" type="button" data-icon="gear" data-role="button" data-theme="a" data-inline="true" onclick="getDataSwitch();" value="X"></input>
+    </div>
+    <div class="ui-btn-right" data-role="controlgroup" data-type="horizontal">
+      <button onclick="getData();getCurrentStandby();" data-icon="refresh" data-inline="true" data-theme="a" data-role="button" data-iconpos="notext"/>
+    </div>
+</header>
 <div id="content" data-role="content" data-scrollz="pull">
 	
 	<ul data-role="listview" data-divider-theme="e" >
@@ -381,7 +384,7 @@ function Assigned(xml) {
 </div>
 <div  data-theme="a" data-role="content" data-position="fixed" data-tap-toggle="false">
 <div id="bottombar" calss="ui-title" data-theme="a" role="heading"></div>
-<div id="footer">--</div>
+<footer style="font-size:14px;font-weight:normal;" id="footer" data-role="footer" data-theme="a"></footer>
 </div>
 
 <input type=hidden value="" size=3 id="Call_ID"> 

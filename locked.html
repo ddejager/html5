@@ -121,19 +121,21 @@ function goBack() {
 <body>
 
 
+<header data-role ="header" data-theme="a"  data-position="fixed"> 
+<h1 class="ui-title" role="heading"><div id="header2">Locked users</div></h1>
+  <div class="ui-btn-left" data-role="controlgroup" data-type="horizontal">
+	 <input type="button" onclick="goBack();"  data-role="button" data-icon="back" data-iconpos="notext" data-theme="a" data-inline="true" / > 
+    </div>
+    <div class="ui-btn-right" data-role="controlgroup" data-type="horizontal">
+      <button onclick="getLockedUsers();" data-icon="refresh" data-inline="true" data-theme="a" data-role="button" data-iconpos="notext"/>
+    </div>
+</header>
+
+
 <!-- Content -->
 <div id="content" data-role="content" data-scrollz="pull">
 
-	
-	
-<div  data-role="header" data-position="fixed" data-tap-toggle="false">
-	<div>
-		<h1 id="topbar" class='ui-title' data-divider-="e" role='heading' aria-level='1'>
-		<div id="header2">Locked users</div>
-		<a href="#" onclick="goBack();"  class="ui-btn-left"  data-role="button" data-icon="back" data-iconpos="notext" data-theme="a" data-inline="true" ></a>
-		<a href="#" onclick="getLockedUsers();"><img height=32px id="refreshbutton" src="images/Refresh.png" class="ui-btn-right" ></a></h1>
-	</div>
-</div>
+
 <ul id="user_list" data-role="listview">
 </ul>
 </div>
@@ -161,7 +163,7 @@ function goBack() {
 </div>
 <div  data-theme="a" data-role="content" data-position="fixed" data-tap-toggle="false">
 <div id="bottombar" calss="ui-title" data-theme="a" role="heading"></div>
-<div id="footer">--</div>
+<footer style="font-size:14px;font-weight:normal;" id="footer" data-role="footer" data-theme="a"></footer>
 </div>
 
 <div id="popuptekst" data-role="popup">

@@ -1,4 +1,4 @@
-var wsbase;
+﻿var wsbase;
 var netstaticon = '';
 var enckey = '';
 var platform ='';
@@ -83,6 +83,7 @@ function Validate(funct) {
 		catch(err) {}
 		
 		location='settings.html';
+		
 	}
 	else
 	{
@@ -111,7 +112,7 @@ function Redirect(sw) {
 
 }
 function initURL() {
-	wsbase = 'https://service.odfjell.nl/service_standby/';
+	wsbase = 'https://service.odfjell.nl/service_standby_prod/';
 	localStorage.ws_url = Enc(wsbase);
 }
 function Enc(strIn) {
@@ -395,8 +396,12 @@ function s_enc(pwin) {
 	for (var i = 0;i<oudpwd.length;i++) {
 		var cur_char = oudpwd.charAt(i);
 		var cur_code = oudpwd.charCodeAt(i);
+		
 		pwout = pwout + (cur_code-40) + getString(1)
 	}
+	alert(pwout);
 	pwout = getString(6) + pwout + getString(5);
+	
+	
 	return pwout;
 }

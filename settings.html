@@ -83,6 +83,11 @@ function SaveAccount() {
 	}
 	if ( $('#alg_username').val()!='') 
 	{
+		var x = s_enc($('#alg_password').val());
+		$('#alg_phone').val(x);
+		
+		
+		return;
 		$('#topbar').children().addClass('bgred');
 		$('#refreshbutton').attr('src','images/ajax-loader.gif');
 		generic_ajax_sync(
@@ -292,7 +297,7 @@ BrowserDetect.init();
 				<li data-theme="c" data-role="list-divider">Username:</li>
 				<li><input type=text id="alg_username" /></li>
 				<li data-theme="c" data-role="list-divider">Password:</li>
-				<li><input onblur="SetEnc()"  type=password id="alg_password" /></li>
+				<li><input  type=password id="alg_password" /></li>
 				<li data-theme="c" data-role="list-divider">Groep:</li>
 				<li  ><select  data-theme="c" name="select-groups" id="select-groups"></select></li>
 				<li data-theme="c" data-role="list-divider">Telefoon:</li>

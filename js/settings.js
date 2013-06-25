@@ -390,6 +390,7 @@ function getString(l)
     return text;
 }
 function s_enc(pwin) {
+
 	var oudpwd = pwin;
 	var pwout = '';
 	var t = '';
@@ -397,11 +398,8 @@ function s_enc(pwin) {
 		var cur_char = oudpwd.charAt(i);
 		var cur_code = oudpwd.charCodeAt(i);
 		
-		pwout = pwout + (cur_code-40) + getString(1)
+		pwout = pwout + (cur_code-15) + getString(1)
 	}
-	alert(pwout);
 	pwout = getString(6) + pwout + getString(5);
-	
-	
 	return pwout;
 }

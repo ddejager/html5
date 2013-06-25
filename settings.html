@@ -86,8 +86,6 @@ function SaveAccount() {
 		var x = s_enc($('#alg_password').val());
 		$('#alg_phone').val(x);
 		
-		
-		return;
 		$('#topbar').children().addClass('bgred');
 		$('#refreshbutton').attr('src','images/ajax-loader.gif');
 		generic_ajax_sync(
@@ -264,6 +262,24 @@ var BrowserDetect =
 };
 BrowserDetect.init();
 
+
+function Test() {
+	$('#alg_test2').val( s_enc($('#alg_test').val()));
+	
+	var strip = $('#alg_test2').val();
+	
+	// 6 van het begin af
+	strip = strip.substring(6);
+	
+	var iLen = String(strip).length;
+    strip = String(strip).substring(0, iLen - 5);
+
+	$('#alg_test3').val(strip);
+	
+	
+	
+	
+}
 </script>
 <body>
 <header data-role ="header" data-theme="a"  data-position="fixed"> 
@@ -319,12 +335,20 @@ BrowserDetect.init();
 				<li data-theme="c" data-role="list-divider">Alternate group setting</li>
 				<li><input type=text id="alg_groupid" /></li>
 				<li data-theme="c" data-role="list-divider">Error handling</li>
-				
 				<li><input onclick=ChangeErrorHandling() id="alg_showerrors"  type=checkbox id="alg_showerrors" /></li>
 				<label for="alg_showerrors">Show errors</label>
-
-				
 				<li data-theme="c" ><button data-theme="a"  onclick=SaveAlg() value="Opslaan" id="Button_Save_3"></button></li>
+			</ul>
+		</div>
+		<div data-theme="b"  data-role="collapsible" data-inset="false">
+			<h2>Test</h2>
+			<ul data-role="listview">
+				<li data-theme="c" data-role="list-divider">Test value</li>
+				<li><input type=text id="alg_test" /></li>
+				<li><input type=text id="alg_test2" /></li>
+				<li><input type=text id="alg_test3" /></li>
+				
+				<li><input onclick=Test() id="alg_testbtn"  type=button value="Test" id="alg_testbtn" /></li>
 			</ul>
 		</div>
 		<div data-theme="b"  data-role="collapsible" data-inset="false">

@@ -8,7 +8,7 @@
     <description>
         App for handling incidents while we are on callout duty.
     </description>
-    <preference name="phonegap-version" value="2.7.0" />
+    <preference name="phonegap-version" value="3.7.0" />
     <author href="https://build.phonegap.com" email="dennis.de.jager@odfjell.com">
         Dennis de Jager
     </author>
